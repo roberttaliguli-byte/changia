@@ -1,333 +1,383 @@
 @extends('layouts.app')
 
 @section('title', 'Dashboard')
-@section('page_title', 'Dashboard')
 
 @push('styles')
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
 <style>
+    /* -------------------------------------------------------------------
+       COMPACT MODERN DASHBOARD - WITH PROPER SCROLLING
+    ------------------------------------------------------------------- */
     :root {
         --primary: #FF6F00;
-        --primary-light: #FFF3E0;
         --primary-dark: #E65100;
+        --primary-light: #FF9800;
+        --primary-soft: #FFF3E0;
         --success: #10B981;
-        --success-light: #D1FAE5;
+        --success-soft: #ECFDF5;
         --warning: #F59E0B;
-        --warning-light: #FEF3C7;
+        --warning-soft: #FFFBEB;
         --danger: #EF4444;
-        --danger-light: #FEE2E2;
-        --text-primary: #111827;
-        --text-secondary: #4B5563;
-        --text-muted: #6B7280;
-        --bg-light: #F9FAFB;
-        --border-color: #E5E7EB;
+        --gray-50: #F9FAFB;
+        --gray-100: #F3F4F6;
+        --gray-200: #E5E7EB;
+        --gray-300: #D1D5DB;
+        --gray-400: #9CA3AF;
+        --gray-500: #6B7280;
+        --gray-600: #4B5563;
+        --gray-700: #374151;
+        --gray-800: #1F2937;
+        --bg-page: #F9FAFB;
+        --bg-card: #FFFFFF;
+        --border-light: #E5E7EB;
+        --text-primary: #000000;
+        --text-secondary: #1F2937;
+        --text-muted: #4B5563;
         --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
         --radius-sm: 8px;
-        --radius-md: 12px;
-        --radius-lg: 16px;
+        --radius-md: 10px;
+        --radius-lg: 12px;
     }
-    
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     body {
-        background: var(--bg-light);
-        font-family: 'Inter', sans-serif;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background: var(--bg-page);
+        color: var(--text-primary);
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    /* FIXED SCROLLING - Only one scrollbar */
+    .main-content {
+        margin-left: 240px;
+        transition: margin-left 0.25s ease;
         min-height: 100vh;
+        background: var(--bg-page);
+        overflow-y: auto !important;
+        height: 100vh;
+        padding-bottom: 30px;
     }
-    
-    .pg-wrap {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 1.5rem 1rem;
-        position: relative;
+
+    /* When sidebar is collapsed */
+    .sidebar.collapsed ~ .main-content {
+        margin-left: 70px;
     }
-    
-    /* Welcome Section - COMPACT */
+
+    /* Mobile sidebar fix */
+    @media (max-width: 768px) {
+        .main-content {
+            margin-left: 0 !important;
+            height: calc(100vh - 60px);
+        }
+    }
+
+    /* Dashboard container - COMPACT */
+    .dashboard-container {
+        width: 100%;
+        padding: 20px 24px;
+    }
+
+    /* Welcome header - COMPACT */
     .welcome-section {
-        margin-bottom: 1.25rem;
+        margin-bottom: 20px;
     }
     
     .welcome-title {
-        font-weight: 700;
         font-size: 1.25rem;
+        font-weight: 700;
         color: var(--text-primary);
-        margin-bottom: 0;
-        line-height: 1.3;
+        margin-bottom: 4px;
     }
     
     .welcome-subtitle {
         font-size: 0.75rem;
         color: var(--text-muted);
-        font-weight: 500;
-        margin-top: 0.125rem;
     }
-    
-    /* Stats Grid - COMPACT CARDS */
+
+    /* Stats Grid - COMPACT 4 columns */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 0.875rem;
-        margin-bottom: 1.25rem;
+        gap: 16px;
+        margin-bottom: 20px;
     }
-    
+
     .stat-card {
-        background: white;
+        background: var(--bg-card);
         border-radius: var(--radius-md);
-        padding: 0.875rem 1rem;
+        padding: 14px 16px;
+        border: 1px solid var(--border-light);
         transition: all 0.2s ease;
-        border: 1px solid var(--border-color);
-        box-shadow: var(--shadow-sm);
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        gap: 0.5rem;
+        align-items: center;
     }
-    
+
     .stat-card:hover {
-        transform: translateY(-1px);
         box-shadow: var(--shadow-md);
         border-color: var(--primary-light);
+        transform: translateY(-1px);
     }
-    
+
     .stat-info {
         flex: 1;
     }
-    
+
     .stat-label {
         font-size: 0.65rem;
         font-weight: 700;
-        color: var(--text-muted);
         text-transform: uppercase;
-        letter-spacing: 0.3px;
-        margin-bottom: 0.25rem;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        margin-bottom: 6px;
     }
-    
+
     .stat-value {
-        font-size: 1.25rem;
+        font-size: 1.4rem;
         font-weight: 800;
         color: var(--text-primary);
         line-height: 1.2;
-        margin-bottom: 0.125rem;
+        margin-bottom: 4px;
     }
-    
+
     .stat-value small {
-        font-size: 0.6rem;
+        font-size: 0.7rem;
         font-weight: 500;
         color: var(--text-muted);
     }
-    
+
     .stat-trend {
-        font-size: 0.6rem;
+        font-size: 0.65rem;
         color: var(--text-muted);
         display: flex;
         align-items: center;
-        gap: 0.2rem;
+        gap: 4px;
     }
-    
-    .stat-trend i {
-        font-size: 0.55rem;
-    }
-    
-    .trend-up {
-        color: var(--success);
-    }
-    
-    .stat-icon-box {
-        width: 36px;
-        height: 36px;
-        background: var(--primary-light);
+
+    .stat-icon {
+        width: 44px;
+        height: 44px;
+        background: var(--primary-soft);
         border-radius: var(--radius-sm);
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
     }
-    
-    .stat-icon-box i {
-        font-size: 1rem;
+
+    .stat-icon i {
+        font-size: 1.2rem;
         color: var(--primary);
-        opacity: 0.8;
     }
-    
+
     /* Progress Card - COMPACT */
     .progress-card {
-        background: white;
+        background: var(--bg-card);
         border-radius: var(--radius-md);
-        padding: 0.875rem 1rem;
-        border: 1px solid var(--border-color);
-        box-shadow: var(--shadow-sm);
-        margin-bottom: 1.25rem;
+        padding: 14px 16px;
+        border: 1px solid var(--border-light);
+        margin-bottom: 20px;
     }
-    
+
     .progress-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 0.5rem;
+        margin-bottom: 10px;
     }
-    
+
     .progress-label {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         font-weight: 700;
-        color: var(--text-muted);
         text-transform: uppercase;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
-    
+
+    .progress-label i {
+        color: var(--primary);
+        font-size: 0.75rem;
+    }
+
     .progress-percent {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         font-weight: 700;
         color: var(--primary);
+        background: var(--primary-soft);
+        padding: 3px 10px;
+        border-radius: 20px;
     }
-    
-    .progress-bar-custom {
+
+    .progress-bar-container {
+        background: var(--gray-100);
+        border-radius: 100px;
         height: 6px;
-        background: var(--border-color);
-        border-radius: 3px;
         overflow: hidden;
-        margin-bottom: 0.5rem;
+        margin-bottom: 10px;
     }
-    
-    .progress-fill {
-        height: 100%;
+
+    .progress-bar-fill {
         background: var(--primary);
-        border-radius: 3px;
+        border-radius: 100px;
+        height: 100%;
+        width: 0%;
         transition: width 0.6s ease;
     }
-    
+
     .progress-stats {
         display: flex;
         justify-content: space-between;
-        font-size: 0.65rem;
+        font-size: 0.7rem;
         color: var(--text-muted);
     }
-    
-    /* Alert - COMPACT */
-    .alert-custom {
-        background: var(--warning-light);
+
+    .progress-stats strong {
+        color: var(--text-primary);
+        font-weight: 700;
+    }
+
+    /* Alert banner - COMPACT */
+    .alert-modern {
+        background: var(--warning-soft);
         border-left: 3px solid var(--warning);
-        padding: 0.5rem 0.75rem;
         border-radius: var(--radius-sm);
-        margin-top: 0.5rem;
+        padding: 8px 12px;
+        margin-top: 12px;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 10px;
     }
-    
-    .alert-custom i {
+
+    .alert-modern i {
         color: var(--warning);
         font-size: 0.75rem;
-        flex-shrink: 0;
     }
-    
-    .alert-custom span {
+
+    .alert-modern span {
         font-size: 0.7rem;
+        font-weight: 500;
         color: var(--text-secondary);
     }
-    
+
     /* Quick Actions - COMPACT */
     .actions-card {
-        background: white;
+        background: var(--bg-card);
         border-radius: var(--radius-md);
-        padding: 0.875rem 1rem;
-        border: 1px solid var(--border-color);
-        box-shadow: var(--shadow-sm);
-        margin-bottom: 1.25rem;
+        padding: 12px 16px;
+        border: 1px solid var(--border-light);
+        margin-bottom: 20px;
     }
-    
-    .actions-label {
-        font-size: 0.7rem;
+
+    .actions-header {
+        font-size: 0.65rem;
         font-weight: 700;
-        color: var(--text-muted);
         text-transform: uppercase;
-        letter-spacing: 0.3px;
-        margin-bottom: 0.625rem;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
-    
+
+    .actions-header i {
+        color: var(--primary);
+    }
+
     .actions-grid {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
+        gap: 10px;
     }
-    
-    .btn-action {
+
+    .action-btn {
         display: inline-flex;
         align-items: center;
-        gap: 0.375rem;
-        padding: 0.375rem 0.75rem;
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: var(--text-secondary);
-        background: var(--bg-light);
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-sm);
+        gap: 8px;
+        padding: 6px 14px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border-radius: 20px;
         text-decoration: none;
-        transition: all 0.2s;
+        transition: all 0.2s ease;
+        background: var(--gray-100);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-light);
     }
-    
-    .btn-action:hover {
-        background: var(--primary-light);
-        border-color: var(--primary);
+
+    .action-btn i {
+        font-size: 0.75rem;
+    }
+
+    .action-btn:hover {
+        background: var(--primary-soft);
         color: var(--primary-dark);
+        border-color: var(--primary-light);
         transform: translateY(-1px);
     }
-    
-    .btn-action-primary {
+
+    .action-primary {
         background: var(--primary);
-        border-color: var(--primary);
         color: white;
+        border: none;
     }
-    
-    .btn-action-primary:hover {
+
+    .action-primary:hover {
         background: var(--primary-dark);
         color: white;
     }
-    
-    /* Row Layout */
-    .row-custom {
+
+    /* Two column grid */
+    .two-col-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
-    
-    /* Single Card - COMPACT */
-    .single-card {
-        background: white;
+
+    /* List Cards - COMPACT */
+    .list-card {
+        background: var(--bg-card);
         border-radius: var(--radius-md);
-        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-light);
         overflow: hidden;
-        border: 1px solid var(--border-color);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
     }
-    
-    /* Card Header - COMPACT */
-    .card-header-custom {
-        padding: 0.75rem 1rem;
-        background: white;
-        border-bottom: 1px solid var(--border-color);
+
+    .list-card-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-light);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        flex-wrap: wrap;
-        gap: 0.5rem;
+        background: var(--bg-card);
     }
-    
-    .card-header-custom h6 {
+
+    .list-card-title {
+        font-size: 0.65rem;
         font-weight: 700;
-        margin-bottom: 0;
-        font-size: 0.75rem;
-        color: var(--text-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        margin: 0;
         display: flex;
         align-items: center;
-        gap: 0.375rem;
+        gap: 8px;
     }
-    
-    .card-header-custom h6 i {
-        font-size: 0.8rem;
+
+    .list-card-title i {
         color: var(--primary);
+        font-size: 0.75rem;
     }
-    
+
     .view-link {
         font-size: 0.65rem;
         font-weight: 600;
@@ -335,375 +385,344 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        gap: 0.25rem;
-        transition: gap 0.2s;
+        gap: 4px;
     }
-    
+
     .view-link:hover {
-        gap: 0.375rem;
-        color: var(--primary-dark);
+        gap: 6px;
     }
-    
+
     /* List Items - COMPACT */
-    .list-items {
-        flex: 1;
-    }
-    
     .list-item {
-        display: block;
-        padding: 0.625rem 1rem;
-        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-light);
         text-decoration: none;
         transition: background 0.2s;
     }
-    
+
     .list-item:last-child {
         border-bottom: none;
     }
-    
+
     .list-item:hover {
-        background: var(--bg-light);
+        background: var(--gray-50);
     }
-    
-    .list-item-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 0.75rem;
-    }
-    
-    .list-item-main {
+
+    .list-item-left {
         flex: 1;
         min-width: 0;
     }
-    
+
     .list-item-title {
         font-weight: 600;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         color: var(--text-primary);
-        margin-bottom: 0.2rem;
+        margin-bottom: 4px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    
+
     .list-item-meta {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
-        font-size: 0.6rem;
+        gap: 10px;
+        font-size: 0.65rem;
         color: var(--text-muted);
     }
-    
+
     .list-item-meta span {
         display: inline-flex;
         align-items: center;
-        gap: 0.2rem;
+        gap: 4px;
     }
-    
-    .list-item-amount {
+
+    .list-item-right {
         text-align: right;
         flex-shrink: 0;
+        margin-left: 16px;
     }
-    
-    .amount-value {
+
+    .amount {
         font-weight: 700;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         color: var(--primary);
         display: block;
-        margin-bottom: 0.2rem;
+        margin-bottom: 5px;
         white-space: nowrap;
     }
-    
-    /* Progress Mini - COMPACT */
+
+    /* Mini progress */
     .progress-mini {
-        height: 2px;
-        background: var(--border-color);
-        border-radius: 2px;
-        overflow: hidden;
         width: 80px;
+        height: 4px;
+        background: var(--gray-200);
+        border-radius: 4px;
+        overflow: hidden;
     }
-    
-    .progress-mini-bar {
+
+    .progress-mini-fill {
         height: 100%;
         background: var(--primary);
-        border-radius: 2px;
-        transition: width 0.3s ease;
+        border-radius: 4px;
     }
-    
-    /* Status Badges - COMPACT */
-    .status-badge {
-        font-size: 0.55rem;
-        padding: 0.15rem 0.4rem;
-        border-radius: 20px;
+
+    /* Badges - COMPACT */
+    .badge {
+        font-size: 0.6rem;
         font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 20px;
         display: inline-flex;
         align-items: center;
-        gap: 0.2rem;
-        white-space: nowrap;
+        gap: 4px;
     }
-    
-    .status-active {
-        background: var(--primary-light);
+
+    .badge-active {
+        background: var(--primary-soft);
         color: var(--primary-dark);
     }
-    
-    .status-completed {
-        background: var(--success-light);
+
+    .badge-completed, .badge-approved {
+        background: var(--success-soft);
         color: var(--success);
     }
-    
-    .status-approved {
-        background: var(--success-light);
-        color: var(--success);
-    }
-    
-    .status-pending {
-        background: var(--warning-light);
+
+    .badge-pending {
+        background: var(--warning-soft);
         color: var(--warning);
     }
-    
-    /* Empty State - COMPACT */
+
+    /* Empty state */
     .empty-state {
         text-align: center;
-        padding: 1.5rem;
+        padding: 30px 20px;
     }
-    
+
     .empty-state i {
         font-size: 1.5rem;
         opacity: 0.3;
         color: var(--text-muted);
-        margin-bottom: 0.5rem;
+        margin-bottom: 10px;
     }
-    
+
     .empty-state p {
         font-size: 0.7rem;
         color: var(--text-muted);
-        margin-bottom: 0.5rem;
+        margin-bottom: 10px;
     }
-    
-    /* Responsive */
+
+    /* -------------------------------------------------------------------
+       RESPONSIVE
+    ------------------------------------------------------------------- */
     @media (max-width: 1024px) {
+        .dashboard-container {
+            padding: 16px 20px;
+        }
         .stats-grid {
-            gap: 0.75rem;
+            gap: 12px;
+        }
+        .stat-value {
+            font-size: 1.2rem;
+        }
+        .stat-icon {
+            width: 38px;
+            height: 38px;
         }
     }
-    
+
     @media (max-width: 768px) {
-        .pg-wrap {
-            padding: 1rem;
+        .dashboard-container {
+            padding: 14px 16px;
         }
-        
-        .welcome-title {
-            font-size: 1.1rem;
-        }
-        
-        .welcome-subtitle {
-            font-size: 0.7rem;
-        }
-        
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.625rem;
-            margin-bottom: 1rem;
+            gap: 12px;
         }
-        
-        .stat-card {
-            padding: 0.625rem 0.75rem;
-        }
-        
-        .stat-value {
-            font-size: 1rem;
-        }
-        
-        .stat-icon-box {
-            width: 32px;
-            height: 32px;
-        }
-        
-        .stat-icon-box i {
-            font-size: 0.875rem;
-        }
-        
-        .progress-card,
-        .actions-card {
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-        }
-        
-        .row-custom {
+        .two-col-grid {
             grid-template-columns: 1fr;
-            gap: 0.75rem;
+            gap: 16px;
         }
-        
-        .list-item-content {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.375rem;
+        .list-item {
+            flex-wrap: wrap;
         }
-        
-        .list-item-amount {
-            text-align: left;
+        .list-item-right {
             width: 100%;
+            margin-left: 0;
+            margin-top: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
         .progress-mini {
-            width: 100%;
-            margin-top: 0.25rem;
+            width: 120px;
         }
-        
-        .amount-value {
-            margin-bottom: 0;
+        .stat-card {
+            padding: 12px 14px;
         }
-        
-        .actions-grid {
-            gap: 0.375rem;
-        }
-        
-        .btn-action {
-            padding: 0.3rem 0.625rem;
-            font-size: 0.65rem;
+        .stat-value {
+            font-size: 1.1rem;
         }
     }
-    
+
     @media (max-width: 480px) {
+        .dashboard-container {
+            padding: 12px;
+        }
         .stats-grid {
             grid-template-columns: 1fr;
+            gap: 10px;
         }
-        
         .stat-card {
-            padding: 0.5rem 0.75rem;
+            padding: 10px 12px;
         }
-        
-        .list-item-amount {
-            flex-wrap: wrap;
-            gap: 0.375rem;
+        .actions-grid {
+            gap: 8px;
+        }
+        .action-btn {
+            padding: 5px 12px;
+            font-size: 0.7rem;
+        }
+        .list-item {
+            padding: 10px 12px;
+        }
+        .list-item-title {
+            font-size: 0.75rem;
+        }
+        .amount {
+            font-size: 0.75rem;
         }
     }
 </style>
 @endpush
 
 @section('content')
-<div class="pg-wrap">
-    <!-- Welcome Section - COMPACT -->
+<div class="dashboard-container">
+    <!-- Welcome Section -->
     <div class="welcome-section">
         <h1 class="welcome-title">Karibu, {{ auth()->user()->name }}!</h1>
-        <p class="welcome-subtitle">Muhtasari wa shughuli zako kwenye mfumo</p>
+        <p class="welcome-subtitle">Muhtasari wa shughuli zako na maendeleo ya michango</p>
     </div>
-    
-    <!-- Stats Grid - COMPACT CARDS -->
+
+    <!-- Stats Grid -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-info">
                 <div class="stat-label">MATUKIO</div>
                 <div class="stat-value">{{ $totalEvents }}</div>
                 <div class="stat-trend">
-                    <i class="fas fa-play trend-up"></i>
+                    <i class="fas fa-play" style="color: var(--success); font-size: 0.55rem;"></i>
                     <span>{{ $activeEvents }} yanaendelea</span>
                 </div>
             </div>
-            <div class="stat-icon-box">
+            <div class="stat-icon">
                 <i class="fas fa-calendar-alt"></i>
             </div>
         </div>
-        
+
         <div class="stat-card">
             <div class="stat-info">
                 <div class="stat-label">WACHANGIAJI</div>
                 <div class="stat-value">{{ number_format($totalContributors) }}</div>
                 <div class="stat-trend">
+                    <i class="fas fa-users"></i>
                     <span>Wote</span>
                 </div>
             </div>
-            <div class="stat-icon-box">
+            <div class="stat-icon">
                 <i class="fas fa-users"></i>
             </div>
         </div>
-        
+
         <div class="stat-card">
             <div class="stat-info">
                 <div class="stat-label">MICHANGO</div>
                 <div class="stat-value">{{ number_format($totalCollected) }} <small>TSh</small></div>
                 <div class="stat-trend">
+                    <i class="fas fa-hand-holding-heart"></i>
                     <span>Imekusanywa</span>
                 </div>
             </div>
-            <div class="stat-icon-box">
+            <div class="stat-icon">
                 <i class="fas fa-hand-holding-heart"></i>
             </div>
         </div>
-        
+
         <div class="stat-card">
             <div class="stat-info">
                 <div class="stat-label">MABAKI</div>
                 <div class="stat-value">{{ number_format($totalRemaining) }} <small>TSh</small></div>
                 <div class="stat-trend">
-                    <span>{{ number_format($totalPromised) }} TSh walioahidi</span>
+                    <i class="fas fa-chart-line"></i>
+                    <span>{{ number_format($totalPromised) }} TSh lengo</span>
                 </div>
             </div>
-            <div class="stat-icon-box">
-                <i class="fas fa-clock"></i>
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
             </div>
         </div>
     </div>
-    
-    <!-- Progress Section - COMPACT -->
+
+    <!-- Progress Section -->
     <div class="progress-card">
         <div class="progress-header">
             <span class="progress-label">
-                <i class="fas fa-chart-line me-1"></i> MAENDELEO YA JUMLA
+                <i class="fas fa-chart-line"></i> MAENDELEO YA JUMLA
             </span>
             <span class="progress-percent">{{ $overallProgress }}%</span>
         </div>
-        <div class="progress-bar-custom">
-            <div class="progress-fill" style="width: {{ $overallProgress }}%;"></div>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" style="width: {{ $overallProgress }}%;"></div>
         </div>
         <div class="progress-stats">
-            <span>Imekusanywa: {{ number_format($totalCollected) }} TSh</span>
-            <span>Lengo: {{ number_format($totalPromised) }} TSh</span>
+            <span>Imekusanywa: <strong>{{ number_format($totalCollected) }} TSh</strong></span>
+            <span>Lengo: <strong>{{ number_format($totalPromised) }} TSh</strong></span>
         </div>
         
         @if($pendingContributions > 0)
-            <div class="alert-custom">
+            <div class="alert-modern">
                 <i class="fas fa-clock"></i>
-                <span>{{ $pendingContributions }} michango inasubiri kuthibitishwa!</span>
+                <span>{{ $pendingContributions }} michango inasubiri kuthibitishwa</span>
             </div>
         @endif
     </div>
-    
-    <!-- Quick Actions - COMPACT -->
+
+    <!-- Quick Actions -->
     <div class="actions-card">
-        <div class="actions-label">
-            <i class="fas fa-bolt me-1"></i> HATUA ZA HARAKA
+        <div class="actions-header">
+            <i class="fas fa-bolt"></i> HATUA ZA HARAKA
         </div>
         <div class="actions-grid">
-            <a href="{{ route('events.create') }}" class="btn-action btn-action-primary">
+            <a href="{{ route('events.create') }}" class="action-btn action-primary">
                 <i class="fas fa-plus-circle"></i> Unda Tukio
             </a>
             @if($totalEvents > 0)
                 @php $firstEvent = $events->first(); @endphp
-                <a href="{{ route('contributors.create', $firstEvent->id) }}" class="btn-action">
+                <a href="{{ route('contributors.create', $firstEvent->id) }}" class="action-btn">
                     <i class="fas fa-user-plus"></i> Mchangiaji
                 </a>
-                <a href="{{ route('cards.create') }}" class="btn-action">
+                <a href="{{ route('cards.create') }}" class="action-btn">
                     <i class="fas fa-id-card"></i> Tengeneza Card
                 </a>
-                <a href="{{ route('reports.summary') }}" class="btn-action">
+                <a href="{{ route('reports.summary') }}" class="action-btn">
                     <i class="fas fa-chart-bar"></i> Ripoti
+                </a>
+                <a href="{{ route('ujumbe.michango') }}" class="action-btn">
+                    <i class="fas fa-envelope"></i> Ujumbe
                 </a>
             @endif
         </div>
     </div>
-    
+
     <!-- Two Column Layout -->
-    <div class="row-custom">
+    <div class="two-col-grid">
         <!-- Recent Events -->
-        <div class="single-card">
-            <div class="card-header-custom">
-                <h6>
+        <div class="list-card">
+            <div class="list-card-header">
+                <h6 class="list-card-title">
                     <i class="fas fa-calendar-alt"></i>
                     Matukio ya Hivi Punde
                 </h6>
@@ -711,50 +730,46 @@
                     Tazama yote <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
-            <div class="list-items">
-                @forelse($events->take(5) as $event)
-                    @php
-                        $collected = $event->contributions()->where('contributions.status', 'approved')->sum('contributions.amount');
-                        $target = $event->target_amount ?? 0;
-                        $progress = $target > 0 ? min(round(($collected / $target) * 100), 100) : 0;
-                    @endphp
-                    <a href="{{ route('events.show', $event) }}" class="list-item">
-                        <div class="list-item-content">
-                            <div class="list-item-main">
-                                <div class="list-item-title">{{ $event->event_name }}</div>
-                                <div class="list-item-meta">
-                                    <span><i class="far fa-calendar"></i> {{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y') }}</span>
-                                    @if($event->status == 'active')
-                                        <span class="status-badge status-active">Inaendelea</span>
-                                    @elseif($event->status == 'completed')
-                                        <span class="status-badge status-completed">Imekamilika</span>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="list-item-amount">
-                                <span class="amount-value">{{ number_format($collected) }} TSh</span>
-                                <div class="progress-mini">
-                                    <div class="progress-mini-bar" style="width: {{ $progress }}%;"></div>
-                                </div>
-                            </div>
+            @forelse($events->take(5) as $event)
+                @php
+                    $collected = $event->contributions()->where('contributions.status', 'approved')->sum('contributions.amount');
+                    $target = $event->target_amount ?? 0;
+                    $progress = $target > 0 ? min(round(($collected / $target) * 100), 100) : 0;
+                @endphp
+                <a href="{{ route('events.show', $event) }}" class="list-item">
+                    <div class="list-item-left">
+                        <div class="list-item-title">{{ \Str::limit($event->event_name, 40) }}</div>
+                        <div class="list-item-meta">
+                            <span><i class="far fa-calendar"></i> {{ \Carbon\Carbon::parse($event->event_date)->format('d M, Y') }}</span>
+                            @if($event->status == 'active')
+                                <span class="badge badge-active">Inaendelea</span>
+                            @elseif($event->status == 'completed')
+                                <span class="badge badge-completed">Imekamilika</span>
+                            @endif
                         </div>
-                    </a>
-                @empty
-                    <div class="empty-state">
-                        <i class="fas fa-calendar-alt"></i>
-                        <p>Hakuna matukio bado</p>
-                        <a href="{{ route('events.create') }}" class="btn-action btn-action-primary" style="display: inline-flex;">
-                            <i class="fas fa-plus-circle"></i> Unda Tukio
-                        </a>
                     </div>
-                @endforelse
-            </div>
+                    <div class="list-item-right">
+                        <span class="amount">{{ number_format($collected) }} TSh</span>
+                        <div class="progress-mini">
+                            <div class="progress-mini-fill" style="width: {{ $progress }}%;"></div>
+                        </div>
+                    </div>
+                </a>
+            @empty
+                <div class="empty-state">
+                    <i class="fas fa-calendar-alt"></i>
+                    <p>Hakuna matukio bado</p>
+                    <a href="{{ route('events.create') }}" class="action-btn action-primary" style="display: inline-flex;">
+                        <i class="fas fa-plus-circle"></i> Unda Tukio
+                    </a>
+                </div>
+            @endforelse
         </div>
-        
+
         <!-- Recent Contributions -->
-        <div class="single-card">
-            <div class="card-header-custom">
-                <h6>
+        <div class="list-card">
+            <div class="list-card-header">
+                <h6 class="list-card-title">
                     <i class="fas fa-history"></i>
                     Michango ya Hivi Punde
                 </h6>
@@ -764,34 +779,30 @@
                     </a>
                 @endif
             </div>
-            <div class="list-items">
-                @forelse($recentContributions->take(5) as $contribution)
-                    <div class="list-item">
-                        <div class="list-item-content">
-                            <div class="list-item-main">
-                                <div class="list-item-title">{{ $contribution->contributor->name }}</div>
-                                <div class="list-item-meta">
-                                    <span><i class="fas fa-tag"></i> {{ $contribution->contributor->event->event_name ?? 'N/A' }}</span>
-                                    <span><i class="far fa-clock"></i> {{ \Carbon\Carbon::parse($contribution->created_at)->format('d M, Y') }}</span>
-                                </div>
-                            </div>
-                            <div class="list-item-amount">
-                                <span class="amount-value">{{ number_format($contribution->amount) }} TSh</span>
-                                @if($contribution->status == 'approved')
-                                    <span class="status-badge status-approved"><i class="fas fa-check-circle"></i> Imethibitishwa</span>
-                                @else
-                                    <span class="status-badge status-pending"><i class="fas fa-clock"></i> Inasubiri</span>
-                                @endif
-                            </div>
+            @forelse($recentContributions->take(5) as $contribution)
+                <div class="list-item">
+                    <div class="list-item-left">
+                        <div class="list-item-title">{{ $contribution->contributor->name ?? 'Mchangiaji' }}</div>
+                        <div class="list-item-meta">
+                            <span><i class="fas fa-tag"></i> {{ $contribution->contributor->event->event_name ?? 'N/A' }}</span>
+                            <span><i class="far fa-clock"></i> {{ \Carbon\Carbon::parse($contribution->created_at)->format('d M, Y') }}</span>
                         </div>
                     </div>
-                @empty
-                    <div class="empty-state">
-                        <i class="fas fa-hand-holding-heart"></i>
-                        <p>Hakuna michango bado</p>
+                    <div class="list-item-right">
+                        <span class="amount">{{ number_format($contribution->amount) }} TSh</span>
+                        @if($contribution->status == 'approved')
+                            <span class="badge badge-approved"><i class="fas fa-check-circle"></i> Imethibitishwa</span>
+                        @else
+                            <span class="badge badge-pending"><i class="fas fa-clock"></i> Inasubiri</span>
+                        @endif
                     </div>
-                @endforelse
-            </div>
+                </div>
+            @empty
+                <div class="empty-state">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <p>Hakuna michango bado</p>
+                </div>
+            @endforelse
         </div>
     </div>
 </div>
@@ -800,7 +811,20 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Any additional JavaScript
+        // Animate progress bars
+        const mainBar = document.querySelector('.progress-bar-fill');
+        if (mainBar) {
+            const width = mainBar.style.width;
+            mainBar.style.width = '0%';
+            setTimeout(() => { mainBar.style.width = width; }, 100);
+        }
+        
+        // Animate mini progress bars
+        document.querySelectorAll('.progress-mini-fill').forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => { bar.style.width = width; }, 150);
+        });
     });
 </script>
 @endpush

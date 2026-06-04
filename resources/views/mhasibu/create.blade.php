@@ -4,6 +4,7 @@
 @section('page_title', 'Sajili Mhasibu')
 
 @push('styles')
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
     :root {
         --primary: #FF6F00;
@@ -14,9 +15,9 @@
         --warning: #F59E0B;
         --danger: #EF4444;
         --danger-light: #FEE2E2;
-        --text-primary: #111827;
-        --text-secondary: #4B5563;
-        --text-muted: #6B7280;
+        --text-primary: #000000;
+        --text-secondary: #1F2937;
+        --text-muted: #4B5563;
         --bg-light: #F9FAFB;
         --border-color: #E5E7EB;
         --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -28,25 +29,283 @@
     
     body {
         background: var(--bg-light);
-        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     
-    .pg-wrap {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 1.5rem 1rem;
-        position: relative;
+    /* Fix scrolling - only one scrollbar */
+    .main-content {
+        overflow-y: auto !important;
+        height: calc(100vh - var(--topbar-h, 60px));
+        padding-bottom: 30px;
     }
     
-    /* Centered Notification */
+    /* Full width container */
+    .create-container {
+        width: 100%;
+        padding: 24px 32px;
+    }
+    
+    /* Header Section */
+    .header-section {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        gap: 1rem;
+    }
+    
+    .header-title h4 {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+    
+    .header-title p {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-bottom: 0;
+    }
+    
+    /* Single Card Container - FULL WIDTH */
+    .single-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        width: 100%;
+    }
+    
+    /* Card Header */
+    .card-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        background: white;
+    }
+    
+    .card-header h5 {
+        font-weight: 700;
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .card-header h5 i {
+        color: var(--primary);
+    }
+    
+    .card-header p {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-bottom: 0;
+    }
+    
+    .btn-outline-custom {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .btn-outline-custom:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+    
+    /* Form Content */
+    .form-content {
+        width: 100%;
+        padding: 24px;
+    }
+    
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        margin-bottom: 16px;
+    }
+    
+    /* Form Fields */
+    .form-group {
+        margin-bottom: 24px;
+    }
+    
+    .form-group label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        display: block;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    
+    .form-group label .required {
+        color: var(--danger);
+        margin-left: 4px;
+    }
+    
+    .form-control-custom {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 0.8rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        background: white;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .form-control-custom:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.1);
+    }
+    
+    .help-text {
+        font-size: 0.6rem;
+        color: var(--text-muted);
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    /* Info Notice */
+    .info-notice {
+        display: flex;
+        gap: 12px;
+        padding: 16px 20px;
+        background: var(--primary-light);
+        border: 1px solid #FFE0B2;
+        border-radius: var(--radius-sm);
+        margin: 20px 0;
+        width: 100%;
+    }
+    
+    .info-notice i {
+        color: var(--primary);
+        font-size: 1rem;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+    
+    .info-notice-content {
+        flex: 1;
+    }
+    
+    .info-notice-content strong {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 4px;
+        font-size: 0.75rem;
+        color: var(--primary-dark);
+    }
+    
+    .info-notice-content span {
+        font-size: 0.7rem;
+        color: var(--text-secondary);
+        line-height: 1.4;
+    }
+    
+    /* Form Footer */
+    .form-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border-color);
+        margin-top: 16px;
+    }
+    
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .btn-cancel:hover {
+        background: var(--danger-light);
+        border-color: var(--danger);
+        color: var(--danger);
+    }
+    
+    .btn-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 24px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: white;
+        background: var(--primary);
+        border: none;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .btn-submit:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+    }
+    
+    /* Back Link */
+    .back-link {
+        margin-top: 20px;
+    }
+    
+    .back-link a {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: color 0.2s;
+    }
+    
+    .back-link a:hover {
+        color: var(--primary);
+    }
+    
+    /* Notification */
     .notification-container {
         position: fixed;
-        top: 20px;
+        top: 80px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 9999;
-        width: auto;
-        min-width: 320px;
+        min-width: 300px;
         max-width: 90%;
         pointer-events: none;
     }
@@ -54,12 +313,12 @@
     .notification {
         background: white;
         border-radius: var(--radius-md);
-        padding: 1rem 1.25rem;
-        margin-bottom: 0.75rem;
+        padding: 12px 16px;
+        margin-bottom: 12px;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        gap: 12px;
+        box-shadow: var(--shadow-md);
         animation: slideDown 0.3s ease;
         pointer-events: auto;
         border-left: 4px solid;
@@ -92,266 +351,31 @@
         color: var(--danger);
     }
     
-    .notification i:first-child {
-        font-size: 1.25rem;
-        flex-shrink: 0;
-    }
-    
     .notification-content {
         flex: 1;
-        font-size: 0.875rem;
+        font-size: 0.75rem;
         font-weight: 500;
         color: var(--text-primary);
-        line-height: 1.4;
     }
     
     .notification-close {
         cursor: pointer;
         opacity: 0.6;
-        transition: opacity 0.2s;
-        font-size: 0.875rem;
-        flex-shrink: 0;
+        font-size: 0.75rem;
         color: var(--text-muted);
     }
     
-    .notification-close:hover {
-        opacity: 1;
-    }
-    
-    /* Single Card Container */
-    .single-card {
-        background: white;
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-md);
-        box-shadow: var(--shadow-sm);
-        overflow: hidden;
-    }
-    
-    /* Event Header inside Card */
-    .event-header {
-        padding: 1rem 1.25rem;
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        background: white;
-    }
-    
-    .event-info h6 {
-        font-weight: 700;
-        margin-bottom: 0.25rem;
-        font-size: 0.938rem;
-        color: var(--text-primary);
-    }
-    
-    .event-info small {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-    }
-    
-    .btn-outline-custom {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        font-size: 0.813rem;
-        font-weight: 500;
-        color: var(--text-secondary);
-        background: white;
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-sm);
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-    
-    .btn-outline-custom:hover {
-        background: var(--primary-light);
-        border-color: var(--primary);
-        color: var(--primary);
-    }
-    
-    /* Form Content */
-    .form-content {
-        padding: 1.5rem;
-    }
-    
-    /* Form Grid */
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.25rem;
-        margin-bottom: 1.25rem;
-    }
-    
-    /* Form Fields */
-    .form-group {
-        margin-bottom: 1rem;
-    }
-    
-    .form-group label {
-        font-size: 0.813rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        display: block;
-        color: var(--text-primary);
-    }
-    
-    .form-group label .required {
-        color: var(--danger);
-        margin-left: 0.25rem;
-    }
-    
-    .form-control-custom {
-        width: 100%;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.875rem;
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-sm);
-        background: white;
-        transition: all 0.2s;
-    }
-    
-    .form-control-custom:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.1);
-    }
-    
-    .help-text {
-        font-size: 0.688rem;
-        color: var(--text-secondary);
-        margin-top: 0.375rem;
-        display: flex;
-        align-items: center;
-        gap: 0.375rem;
-    }
-    
-    .help-text i {
-        font-size: 0.688rem;
-    }
-    
-    /* Info Notice */
-    .info-notice {
-        display: flex;
-        gap: 0.75rem;
-        padding: 0.875rem 1rem;
-        background: var(--primary-light);
-        border: 1px solid #FFE0B2;
-        border-radius: var(--radius-sm);
-        margin-bottom: 1.5rem;
-    }
-    
-    .info-notice i {
-        color: var(--primary);
-        font-size: 1rem;
-        flex-shrink: 0;
-        margin-top: 0.125rem;
-    }
-    
-    .info-notice-content {
-        flex: 1;
-    }
-    
-    .info-notice-content strong {
-        display: block;
-        font-weight: 700;
-        margin-bottom: 0.25rem;
-        font-size: 0.813rem;
-        color: var(--primary-dark);
-    }
-    
-    .info-notice-content span {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-        line-height: 1.4;
-    }
-    
-    /* Form Footer */
-    .form-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-        padding-top: 1.25rem;
-        border-top: 1px solid var(--border-color);
-    }
-    
-    .btn-cancel {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1.25rem;
-        font-size: 0.813rem;
-        font-weight: 500;
-        color: var(--text-secondary);
-        background: white;
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-sm);
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-    
-    .btn-cancel:hover {
-        background: var(--danger-light);
-        border-color: var(--danger);
-        color: var(--danger);
-    }
-    
-    .btn-submit {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1.5rem;
-        font-size: 0.813rem;
-        font-weight: 600;
-        color: white;
-        background: var(--primary);
-        border: none;
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .btn-submit:hover {
-        background: var(--primary-dark);
-        transform: translateY(-1px);
-    }
-    
-    .btn-submit:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-    
-    /* Back Link */
-    .back-link {
-        text-align: center;
-        margin-top: 1rem;
-    }
-    
-    .back-link a {
-        font-size: 0.813rem;
-        color: var(--text-secondary);
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: color 0.2s;
-    }
-    
-    .back-link a:hover {
-        color: var(--primary);
-    }
-    
-    /* Spinner */
-    .spinner {
-        display: none;
-        width: 14px;
-        height: 14px;
+    /* Loading Spinner */
+    .spinner-border-sm {
+        width: 12px;
+        height: 12px;
+        border-width: 2px;
+        display: inline-block;
+        border-radius: 50%;
         border: 2px solid rgba(255, 255, 255, 0.3);
         border-top-color: white;
-        border-radius: 50%;
         animation: spin 0.6s linear infinite;
+        margin-right: 6px;
     }
     
     @keyframes spin {
@@ -359,48 +383,91 @@
     }
     
     /* Responsive */
-    @media (max-width: 640px) {
+    @media (max-width: 1024px) {
+        .create-container {
+            padding: 20px 24px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .create-container {
+            padding: 16px;
+        }
+        
         .form-grid {
             grid-template-columns: 1fr;
             gap: 0;
         }
         
         .form-content {
-            padding: 1.25rem;
+            padding: 16px;
         }
         
-        .event-header {
+        .card-header {
             flex-direction: column;
             text-align: center;
+            padding: 12px 16px;
+        }
+        
+        .form-footer {
+            flex-direction: column-reverse;
+        }
+        
+        .btn-cancel, .btn-submit {
+            justify-content: center;
+            width: 100%;
         }
         
         .notification-container {
             min-width: 280px;
+            top: 70px;
         }
         
-        .notification {
-            padding: 0.75rem 1rem;
+        .info-notice {
+            padding: 12px 16px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .create-container {
+            padding: 12px;
+        }
+        
+        .form-group label {
+            font-size: 0.65rem;
+        }
+        
+        .form-control-custom {
+            font-size: 0.7rem;
+            padding: 8px 10px;
         }
     }
 </style>
 @endpush
 
 @section('content')
-<div class="pg-wrap">
-    <!-- Centered Notification Container -->
+<div class="create-container">
+    <!-- Header -->
+    <div class="header-section">
+        <div class="header-title">
+            <h4>Sajili Mhasibu</h4>
+            <p>Jaza taarifa za mhasibu anayesimamia michango</p>
+        </div>
+        <a href="{{ route('mhasibu.index') }}" class="btn-outline-custom">
+            <i class="fas fa-list"></i> Orodha ya Wahasibu
+        </a>
+    </div>
+    
+    <!-- Notification Container -->
     <div id="notificationContainer" class="notification-container"></div>
     
-    <!-- Single Card Container -->
+    <!-- Single Form Container -->
     <div class="single-card">
-        <!-- Header -->
-        <div class="event-header">
-            <div class="event-info">
-                <h6><i class="fas fa-user-plus me-2"></i>Sajili Mhasibu Mpya</h6>
-                <small>Jaza taarifa za mhasibu anayesimamia michango</small>
+        <div class="card-header">
+            <div>
+                <h5><i class="fas fa-user-tie"></i> Maelezo ya Mhasibu</h5>
+                <p>Taarifa zote muhimu za kuingia kwenye mfumo</p>
             </div>
-            <a href="{{ route('mhasibu.index') }}" class="btn-outline-custom">
-                <i class="fas fa-list"></i> Orodha ya Wahasibu
-            </a>
         </div>
         
         <!-- Form Content -->
@@ -430,7 +497,7 @@
                                    placeholder="mhasibu@example.com"
                                    required>
                             <div class="help-text">
-                                <i class="fas fa-envelope"></i> Hii itatumika kuingia kwenye akaunti
+                                <i class="fas fa-info-circle"></i> Hii itatumika kuingia kwenye akaunti
                             </div>
                         </div>
                         
@@ -458,7 +525,7 @@
                                 @endforeach
                             </select>
                             <div class="help-text">
-                                <i class="fas fa-calendar"></i> Mhasibu atasimamia michango ya tukio hili
+                                <i class="fas fa-info-circle"></i> Mhasibu atasimamia michango ya tukio hili
                             </div>
                         </div>
                         
@@ -484,9 +551,9 @@
                 
                 <!-- Info Notice -->
                 <div class="info-notice">
-                    <i class="fas fa-info-circle"></i>
+                    <i class="fas fa-lightbulb"></i>
                     <div class="info-notice-content">
-                        <strong>Kumbuka:</strong>
+                        <strong>ℹ️ Kumbuka:</strong>
                         <span>Mhasibu atapokea taarifa za michango na ataweza kuthibitisha malipo baada ya kuingia kwenye akaunti yake.</span>
                     </div>
                 </div>
@@ -497,19 +564,22 @@
                         <i class="fas fa-times"></i> Ghairi
                     </a>
                     <button type="submit" class="btn-submit" id="submitBtn">
-                        <span class="spinner" id="spinner"></span>
                         <i class="fas fa-save"></i> Sajili Mhasibu
                     </button>
                 </div>
             </form>
         </div>
     </div>
+    
+    <!-- Back Link -->
+    <div class="back-link">
+        <a href="{{ route('dashboard') }}">
+            <i class="fas fa-arrow-left"></i> Rudi kwenye Dashboard
+        </a>
+    </div>
 </div>
-@endsection
 
-@push('scripts')
 <script>
-    // Auto-disappearing notifications
     function showNotification(message, type = 'success') {
         const container = document.getElementById('notificationContainer');
         if (!container) return;
@@ -517,17 +587,7 @@
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
         
-        let icon = '';
-        switch(type) {
-            case 'success':
-                icon = '<i class="fas fa-check-circle"></i>';
-                break;
-            case 'error':
-                icon = '<i class="fas fa-exclamation-circle"></i>';
-                break;
-            default:
-                icon = '<i class="fas fa-info-circle"></i>';
-        }
+        let icon = type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>';
         
         notification.innerHTML = `
             ${icon}
@@ -539,32 +599,24 @@
         
         container.appendChild(notification);
         
-        // Auto remove after 3 seconds
         setTimeout(() => {
             if (notification && notification.parentNode) {
                 notification.style.opacity = '0';
                 notification.style.transform = 'translateY(-20px)';
-                setTimeout(() => {
-                    if (notification.parentNode) notification.remove();
-                }, 300);
+                setTimeout(() => notification.remove(), 300);
             }
         }, 3000);
         
-        // Close button functionality
         const closeBtn = notification.querySelector('.notification-close');
         if (closeBtn) {
             closeBtn.addEventListener('click', () => {
                 notification.style.opacity = '0';
-                notification.style.transform = 'translateY(-20px)';
-                setTimeout(() => {
-                    if (notification.parentNode) notification.remove();
-                }, 300);
+                setTimeout(() => notification.remove(), 300);
             });
         }
     }
     
     document.addEventListener('DOMContentLoaded', function() {
-        // Check for session messages
         @if(session('success'))
             showNotification('{{ session('success') }}', 'success');
         @endif
@@ -581,15 +633,13 @@
         
         const form = document.getElementById('accountantForm');
         const submitBtn = document.getElementById('submitBtn');
-        const spinner = document.getElementById('spinner');
         
         if (form) {
             form.addEventListener('submit', function() {
-                spinner.style.display = 'inline-block';
                 submitBtn.disabled = true;
-                submitBtn.style.opacity = '0.7';
+                submitBtn.innerHTML = '<span class="spinner-border-sm"></span> Inahifadhi...';
             });
         }
     });
 </script>
-@endpush
+@endsection

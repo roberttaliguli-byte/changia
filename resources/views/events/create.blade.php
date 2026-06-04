@@ -11,14 +11,11 @@
         --primary-light: #FFF3E0;
         --primary-dark: #E65100;
         --success: #10B981;
-        --success-light: #D1FAE5;
         --warning: #F59E0B;
-        --warning-light: #FEF3C7;
         --danger: #EF4444;
-        --danger-light: #FEE2E2;
-        --text-primary: #111827;
-        --text-secondary: #4B5563;
-        --text-muted: #6B7280;
+        --text-primary: #000000;
+        --text-secondary: #1F2937;
+        --text-muted: #4B5563;
         --bg-light: #F9FAFB;
         --border-color: #E5E7EB;
         --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -33,35 +30,60 @@
         font-family: 'Inter', sans-serif;
     }
     
-    .pg-wrap {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 1.5rem 1rem;
+    /* Full width container - NO CENTERING like dashboard */
+    .create-container {
+        width: 100%;
+        padding: 24px 32px;
     }
     
-    /* Form Card */
+    /* Header Section - matches dashboard */
+    .header-section {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        gap: 1rem;
+    }
+    
+    .header-title h4 {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+    
+    .header-title p {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-bottom: 0;
+    }
+    
+    /* Form Card - Full width with max-width for readability */
     .form-card {
         background: white;
         border-radius: var(--radius-lg);
         border: 1px solid var(--border-color);
         box-shadow: var(--shadow-md);
         overflow: hidden;
+        max-width: 100%;
+        margin: 0;
     }
     
     .form-header {
-        padding: 1rem 1.5rem;
-        background: white;
+        padding: 20px 24px;
         border-bottom: 1px solid var(--border-color);
+        background: white;
     }
     
     .form-header h5 {
         font-weight: 700;
         font-size: 1rem;
-        color: var(--text-primary);
-        margin-bottom: 0;
+        margin: 0;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 10px;
+        color: var(--text-primary);
     }
     
     .form-header h5 i {
@@ -70,24 +92,32 @@
     }
     
     .form-body {
-        padding: 1.5rem;
+        padding: 24px;
     }
     
-    /* Form Elements */
+    /* Form Grid - Two columns */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
     .form-group {
-        margin-bottom: 1.25rem;
+        margin-bottom: 20px;
+    }
+    
+    .form-group-full {
+        grid-column: span 2;
     }
     
     .form-label {
         font-size: 0.75rem;
         font-weight: 700;
         color: var(--text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-        margin-bottom: 0.5rem;
+        margin-bottom: 8px;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 6px;
     }
     
     .form-label i {
@@ -101,9 +131,10 @@
     }
     
     .form-control, .form-select {
+        width: 100%;
+        padding: 10px 12px;
         border: 1px solid var(--border-color);
         border-radius: var(--radius-sm);
-        padding: 0.5rem 0.75rem;
         font-size: 0.813rem;
         font-family: 'Inter', sans-serif;
         transition: all 0.2s;
@@ -112,37 +143,31 @@
     
     .form-control:focus, .form-select:focus {
         border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.1);
         outline: none;
-    }
-    
-    .input-group-text {
-        background: var(--bg-light);
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-sm);
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--text-secondary);
+        box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.1);
     }
     
     .form-text {
         font-size: 0.65rem;
         color: var(--text-muted);
-        margin-top: 0.375rem;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
     }
     
-    /* Quick Amount Badges */
+    /* Quick Amount Buttons */
     .quick-amounts {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
+        gap: 8px;
+        margin-top: 8px;
     }
     
     .quick-badge {
         display: inline-flex;
         align-items: center;
-        padding: 0.3rem 0.75rem;
+        padding: 5px 12px;
         background: var(--bg-light);
         border: 1px solid var(--border-color);
         border-radius: 20px;
@@ -160,97 +185,13 @@
         transform: translateY(-1px);
     }
     
-    /* Form Actions */
-    .form-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 0.75rem;
-        margin-top: 1.5rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--border-color);
-    }
-    
-    .btn-cancel {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--text-secondary);
-        background: white;
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-sm);
-        text-decoration: none;
-        transition: all 0.2s;
-    }
-    
-    .btn-cancel:hover {
-        background: var(--bg-light);
-        border-color: var(--text-muted);
-        color: var(--text-primary);
-    }
-    
-    .btn-submit {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1.25rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: white;
-        background: var(--primary);
-        border: none;
-        border-radius: var(--radius-sm);
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .btn-submit:hover {
-        background: var(--primary-dark);
-        transform: translateY(-1px);
-        box-shadow: var(--shadow-sm);
-    }
-    
-    /* Info Alert */
-    .info-alert {
-        background: var(--bg-light);
-        border-left: 3px solid var(--primary);
-        border-radius: var(--radius-sm);
-        padding: 0.875rem 1rem;
-        margin-top: 1.25rem;
-        display: flex;
-        gap: 0.75rem;
-    }
-    
-    .info-alert i {
-        color: var(--primary);
-        font-size: 1rem;
-        flex-shrink: 0;
-        margin-top: 0.125rem;
-    }
-    
-    .info-alert-content strong {
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        display: block;
-        margin-bottom: 0.25rem;
-    }
-    
-    .info-alert-content p {
-        font-size: 0.7rem;
-        color: var(--text-muted);
-        margin-bottom: 0;
-    }
-    
     /* Error Alert */
     .error-alert {
-        background: var(--danger-light);
+        background: #FEF2F2;
         border-left: 3px solid var(--danger);
         border-radius: var(--radius-sm);
-        padding: 0.75rem 1rem;
-        margin-bottom: 1rem;
+        padding: 12px 16px;
+        margin-bottom: 20px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -259,7 +200,7 @@
     .error-alert-content {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 10px;
     }
     
     .error-alert-content i {
@@ -284,30 +225,118 @@
         color: var(--danger);
     }
     
-    /* Row Layout */
-    .row-form {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.25rem;
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .btn-cancel:hover {
+        background: var(--bg-light);
+        border-color: var(--text-muted);
+        color: var(--text-primary);
+    }
+    
+    .btn-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: white;
+        background: var(--primary);
+        border: none;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .btn-submit:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    /* Info Box */
+    .info-box {
+        background: var(--bg-light);
+        border-radius: var(--radius-md);
+        padding: 16px;
+        margin-top: 24px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        border: 1px solid var(--border-color);
+    }
+    
+    .info-box i {
+        color: var(--primary);
+        font-size: 1rem;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+    
+    .info-box-content strong {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        display: block;
+        margin-bottom: 4px;
+    }
+    
+    .info-box-content p {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        margin-bottom: 0;
     }
     
     /* Responsive */
+    @media (max-width: 1024px) {
+        .create-container {
+            padding: 20px 24px;
+        }
+    }
+    
     @media (max-width: 768px) {
-        .pg-wrap {
-            padding: 1rem;
+        .create-container {
+            padding: 16px;
         }
         
-        .form-body {
-            padding: 1rem;
-        }
-        
-        .row-form {
+        .form-grid {
             grid-template-columns: 1fr;
             gap: 0;
         }
         
-        .form-group {
-            margin-bottom: 1rem;
+        .form-group-full {
+            grid-column: span 1;
+        }
+        
+        .form-body {
+            padding: 20px;
+        }
+        
+        .form-header {
+            padding: 16px 20px;
         }
         
         .form-actions {
@@ -320,46 +349,74 @@
         }
         
         .quick-amounts {
-            gap: 0.375rem;
+            gap: 6px;
         }
         
         .quick-badge {
-            padding: 0.25rem 0.625rem;
+            padding: 4px 10px;
             font-size: 0.65rem;
+        }
+        
+        .info-box {
+            padding: 12px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .create-container {
+            padding: 12px;
+        }
+        
+        .form-body {
+            padding: 16px;
+        }
+        
+        .form-header {
+            padding: 12px 16px;
         }
     }
 </style>
 @endpush
 
 @section('content')
-<div class="pg-wrap">
-    <!-- Error Alert -->
-    @if ($errors->any())
-        <div class="error-alert">
-            <div class="error-alert-content">
-                <i class="fas fa-exclamation-circle"></i>
-                <span>{{ $errors->first() }}</span>
-            </div>
-            <div class="btn-close-custom" onclick="this.closest('.error-alert').remove()">
-                <i class="fas fa-times"></i>
-            </div>
+<div class="create-container">
+    <!-- Header Section - Matches Dashboard -->
+    <div class="header-section">
+        <div class="header-title">
+            <h4>Unda Tukio Jipya</h4>
+            <p>Jaza taarifa zote ili kuunda tukio lako</p>
         </div>
-    @endif
-
+        <a href="{{ route('events.index') }}" class="btn-cancel" style="padding: 8px 16px;">
+            <i class="fas fa-arrow-left"></i> Rudi kwenye Matukio
+        </a>
+    </div>
+    
     <!-- Form Card -->
     <div class="form-card">
         <div class="form-header">
             <h5>
                 <i class="fas fa-plus-circle"></i>
-                Unda Tukio Jipya
+                Fomu ya Kuunda Tukio
             </h5>
         </div>
-        
         <div class="form-body">
-            <form method="POST" action="{{ route('events.store') }}" id="eventForm">
+            <!-- Error Alert -->
+            @if ($errors->any())
+                <div class="error-alert">
+                    <div class="error-alert-content">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>{{ $errors->first() }}</span>
+                    </div>
+                    <div class="btn-close-custom" onclick="this.closest('.error-alert').remove()">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('events.store') }}" id="createEventForm">
                 @csrf
                 
-                <div class="row-form">
+                <div class="form-grid">
                     <!-- Left Column -->
                     <div>
                         <!-- Event Type -->
@@ -369,7 +426,7 @@
                                 Aina ya Tukio
                                 <span class="required-star">*</span>
                             </label>
-                            <select class="form-select" name="event_type" id="eventType" required>
+                            <select name="event_type" class="form-select" required>
                                 <option value="" selected disabled>-- Chagua Aina ya Tukio --</option>
                                 <option value="harusi" {{ old('event_type') == 'harusi' ? 'selected' : '' }}>🎊 Harusi</option>
                                 <option value="sendoff" {{ old('event_type') == 'sendoff' ? 'selected' : '' }}>✈️ Send-off</option>
@@ -391,11 +448,10 @@
                             </label>
                             <input type="text" 
                                    name="event_name" 
-                                   id="eventName"
                                    class="form-control" 
-                                   placeholder="Mf: Harusi ya Juma & Asha"
                                    value="{{ old('event_name') }}"
-                                   required>
+                                   required 
+                                   placeholder="Mf: Harusi ya Juma & Asha">
                         </div>
 
                         <!-- Event Date -->
@@ -408,9 +464,8 @@
                             <input type="date" 
                                    name="event_date" 
                                    class="form-control" 
-                                   id="eventDate"
-                                   min="{{ date('Y-m-d') }}"
                                    value="{{ old('event_date') }}"
+                                   min="{{ date('Y-m-d') }}" 
                                    required>
                         </div>
                     </div>
@@ -421,30 +476,17 @@
                         <div class="form-group">
                             <label class="form-label">
                                 <i class="fas fa-chart-line"></i>
-                                Kiasi Lengwa
+                                Kiasi Lengwa (TSh)
                             </label>
-                            <div class="input-group">
-                                <span class="input-group-text">TSh</span>
-                                <input type="number" 
-                                       name="target_amount" 
-                                       class="form-control" 
-                                       id="targetAmount"
-                                       placeholder="0"
-                                       min="0"
-                                       step="1000"
-                                       value="{{ old('target_amount') }}">
-                            </div>
-                            <div class="form-text">
-                                <i class="fas fa-info-circle me-1"></i>Hiari - Acha ikiwa huna lengo maalum
-                            </div>
-                        </div>
-
-                        <!-- Quick Amount Buttons -->
-                        <div class="form-group">
-                            <label class="form-label">
-                                <i class="fas fa-bolt"></i>
-                                Mapendekezo ya Lengo
-                            </label>
+                            <input type="number" 
+                                   name="target_amount" 
+                                   class="form-control" 
+                                   value="{{ old('target_amount') }}"
+                                   min="0" 
+                                   step="1000" 
+                                   placeholder="0">
+                            
+                            <!-- Quick Amount Buttons -->
                             <div class="quick-amounts">
                                 <span class="quick-badge" onclick="setTargetAmount(500000)">500k TSh</span>
                                 <span class="quick-badge" onclick="setTargetAmount(1000000)">1M TSh</span>
@@ -452,28 +494,46 @@
                                 <span class="quick-badge" onclick="setTargetAmount(5000000)">5M TSh</span>
                                 <span class="quick-badge" onclick="setTargetAmount(10000000)">10M TSh</span>
                             </div>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i>
+                                Hiari - Acha ikiwa huna lengo maalum
+                            </div>
+                        </div>
+
+                        <!-- Status (Hidden - always active on create) -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-flag-checkered"></i>
+                                Hali ya Tukio
+                            </label>
+                            <div style="padding: 8px 12px; background: var(--bg-light); border-radius: var(--radius-sm);">
+                                <span class="status-badge" style="display: inline-flex; align-items: center; gap: 6px; background: #D1FAE5; color: #10B981; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">
+                                    <i class="fas fa-play"></i> Inaendelea (Chaguo-msingi)
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Description (Full Width) -->
-                <div class="form-group">
+                <!-- Description - Full Width -->
+                <div class="form-group form-group-full">
                     <label class="form-label">
                         <i class="fas fa-align-left"></i>
                         Maelezo ya Tukio
                     </label>
                     <textarea name="description" 
                               class="form-control" 
-                              rows="3"
+                              rows="4"
                               placeholder="Andika maelezo kuhusu tukio lako...">{{ old('description') }}</textarea>
                     <div class="form-text">
-                        <i class="fas fa-info-circle me-1"></i>Hiari - Maelezo yataonekana kwa wachangiaji
+                        <i class="fas fa-info-circle"></i>
+                        Hiari - Maelezo yataonekana kwa wachangiaji wako
                     </div>
                 </div>
 
                 <!-- Form Actions -->
                 <div class="form-actions">
-                    <a href="{{ route('dashboard') }}" class="btn-cancel">
+                    <a href="{{ route('events.index') }}" class="btn-cancel">
                         <i class="fas fa-times"></i>
                         Ghairi
                     </a>
@@ -486,34 +546,33 @@
         </div>
     </div>
 
-    <!-- Quick Info -->
-    <div class="info-alert">
+    <!-- Info Box - Helpful Tips -->
+    <div class="info-box">
         <i class="fas fa-lightbulb"></i>
-        <div class="info-alert-content">
-            <strong>Vidokezo:</strong>
-            <p>Baada ya kuunda tukio, utapata kiungo maalum cha kuwakaribisha wachangiaji. Unaweza kufuatilia michango kwa wakati halisi.</p>
+        <div class="info-box-content">
+            <strong>Vidokezi vya Kusaidia:</strong>
+            <p>Baada ya kuunda tukio, utaweza kuongeza wachangiaji, kufuatilia michango, na kutuma kadi za mwaliko. Hakikisha umejaza taarifa zote kwa usahihi.</p>
         </div>
     </div>
 </div>
-@endsection
 
-@push('scripts')
 <script>
     // Function to set target amount
     function setTargetAmount(amount) {
-        document.getElementById('targetAmount').value = amount;
-        // Add visual feedback
-        const input = document.getElementById('targetAmount');
-        input.style.borderColor = 'var(--primary)';
-        setTimeout(() => {
-            input.style.borderColor = '';
-        }, 500);
+        const targetInput = document.querySelector('input[name="target_amount"]');
+        if (targetInput) {
+            targetInput.value = amount;
+            targetInput.style.borderColor = 'var(--primary)';
+            setTimeout(() => {
+                targetInput.style.borderColor = '';
+            }, 500);
+        }
     }
     
-    // Auto-fill event name based on selection
-    document.getElementById('eventType')?.addEventListener('change', function() {
+    // Auto-fill event name suggestion based on selected type
+    document.querySelector('select[name="event_type"]')?.addEventListener('change', function() {
         const selected = this.value;
-        const eventNameInput = document.getElementById('eventName');
+        const eventNameInput = document.querySelector('input[name="event_name"]');
         
         if (selected && !eventNameInput.value.trim()) {
             const suggestions = {
@@ -530,47 +589,47 @@
             if (suggestions[selected]) {
                 eventNameInput.value = suggestions[selected];
                 eventNameInput.focus();
+                // Move cursor to end of text
+                eventNameInput.setSelectionRange(eventNameInput.value.length, eventNameInput.value.length);
             }
         }
     });
     
-    // Set min date to today
-    const today = new Date().toISOString().split('T')[0];
-    const eventDateInput = document.getElementById('eventDate');
-    if (eventDateInput) {
-        eventDateInput.setAttribute('min', today);
-    }
-    
     // Form validation
-    const form = document.getElementById('eventForm');
+    const form = document.getElementById('createEventForm');
     const submitBtn = document.getElementById('submitBtn');
     
-    form?.addEventListener('submit', function(e) {
-        const eventType = document.getElementById('eventType')?.value;
-        const eventName = document.getElementById('eventName')?.value.trim();
-        const eventDate = document.getElementById('eventDate')?.value;
-        
-        if (!eventType) {
-            e.preventDefault();
-            showValidationError('Tafadhali chagua aina ya tukio');
-        } else if (!eventName) {
-            e.preventDefault();
-            showValidationError('Tafadhali weka jina la tukio');
-        } else if (!eventDate) {
-            e.preventDefault();
-            showValidationError('Tafadhali weka tarehe ya tukio');
-        } else {
-            // Show loading state
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" style="width: 12px; height: 12px;"></span> Inahifadhi...';
-        }
-    });
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const eventType = document.querySelector('select[name="event_type"]')?.value;
+            const eventName = document.querySelector('input[name="event_name"]')?.value.trim();
+            const eventDate = document.querySelector('input[name="event_date"]')?.value;
+            
+            if (!eventType) {
+                e.preventDefault();
+                showError('Tafadhali chagua aina ya tukio');
+            } else if (!eventName) {
+                e.preventDefault();
+                showError('Tafadhali weka jina la tukio');
+            } else if (!eventDate) {
+                e.preventDefault();
+                showError('Tafadhali weka tarehe ya tukio');
+            } else {
+                // Show loading state
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" style="width: 12px; height: 12px;"></span> Inahifadhi...';
+                }
+            }
+        });
+    }
     
-    function showValidationError(message) {
+    function showError(message) {
         // Check if error alert already exists
         let errorAlert = document.querySelector('.error-alert');
-        if (!errorAlert) {
-            const container = document.querySelector('.pg-wrap');
+        const container = document.querySelector('.form-body');
+        
+        if (!errorAlert && container) {
             const newAlert = document.createElement('div');
             newAlert.className = 'error-alert';
             newAlert.innerHTML = `
@@ -582,23 +641,30 @@
                     <i class="fas fa-times"></i>
                 </div>
             `;
-            container?.insertBefore(newAlert, container.firstChild);
-        } else {
+            container.insertBefore(newAlert, container.firstChild);
+        } else if (errorAlert) {
             const errorSpan = errorAlert.querySelector('.error-alert-content span');
             if (errorSpan) errorSpan.textContent = message;
         }
         
         // Scroll to error
         errorAlert?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            const alert = document.querySelector('.error-alert');
+            if (alert) {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            }
+        }, 5000);
     }
     
-    // Auto-dismiss error alert after 5 seconds
-    setTimeout(() => {
-        const errorAlert = document.querySelector('.error-alert');
-        if (errorAlert) {
-            errorAlert.style.opacity = '0';
-            setTimeout(() => errorAlert.remove(), 300);
-        }
-    }, 5000);
+    // Set min date to today
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.querySelector('input[name="event_date"]');
+    if (dateInput) {
+        dateInput.setAttribute('min', today);
+    }
 </script>
-@endpush
+@endsection

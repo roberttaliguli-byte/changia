@@ -9,25 +9,31 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --primary: #FF6F00;
             --primary-dark: #e65100;
             --primary-light: #FF9800;
+            --primary-soft: #FFF3E0;
             --accent: #FFC107;
-            --sidebar-w: 240px;
-            --sidebar-w-sm: 70px;
+            --sidebar-w: 260px;
+            --sidebar-w-sm: 72px;
             --topbar-h: 60px;
+            --gray-50: #f8fafc;
             --gray-100: #f1f5f9;
             --gray-200: #e2e8f0;
             --gray-300: #cbd5e1;
-            --gray-600: #475569;
-            --gray-700: #334155;
             --danger: #ef4444;
             --success: #10b981;
             --warning: #f59e0b;
             --info: #3b82f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
         }
 
         * {
@@ -42,12 +48,15 @@
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
             background: var(--gray-100);
-            color: var(--gray-700);
+            color: #000000;
+            font-weight: 500;
         }
 
-        /* Sidebar */
+        /* ============================================
+           SIDEBAR - ALL BLACK TEXT
+        ============================================ */
         .sidebar {
             position: fixed;
             top: 0;
@@ -62,74 +71,106 @@
             z-index: 1050;
             overflow-y: auto;
             overflow-x: hidden;
-            box-shadow: 2px 0 8px rgba(0,0,0,0.03);
+            box-shadow: var(--shadow-sm);
         }
 
         .sidebar::-webkit-scrollbar {
-            width: 3px;
+            width: 4px;
         }
         
         .sidebar::-webkit-scrollbar-thumb {
             background: var(--gray-300);
-            border-radius: 3px;
+            border-radius: 4px;
         }
 
         .sidebar.collapsed {
             width: var(--sidebar-w-sm);
         }
 
-        /* Logo */
-        .sidebar-logo {
-            padding: 12px 16px;
+        /* Logo Container */
+        .sidebar-logo-container {
+            padding: 20px 16px 12px 16px;
             border-bottom: 1px solid var(--gray-200);
-            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
-            gap: 10px;
-            white-space: nowrap;
-            flex-shrink: 0;
+            justify-content: center;
+            transition: all 0.2s ease;
         }
 
-        .sidebar-logo i {
-            font-size: 1.4rem;
-            color: var(--primary);
-            flex-shrink: 0;
+        .sidebar-logo-icon i {
+            font-size: 1.6rem;
+            color: white;
         }
 
-        .sidebar-logo span {
-            font-size: 1rem;
-            font-weight: 700;
+        .sidebar-logo-text {
+            text-align: center;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar-logo-text .logo-main {
+            font-size: 0.85rem;
+            font-weight: 800;
             background: linear-gradient(135deg, var(--primary), var(--accent));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            transition: opacity 0.2s;
+            letter-spacing: 0.5px;
         }
 
-        .sidebar.collapsed .sidebar-logo span {
+        .sidebar-logo-text .logo-sub {
+            font-size: 0.6rem;
+            color: #000000;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .sidebar.collapsed .sidebar-logo-text {
             opacity: 0;
             pointer-events: none;
+            display: none;
         }
 
-        /* Navigation */
+        .sidebar.collapsed .sidebar-logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .sidebar.collapsed .sidebar-logo-icon i {
+            font-size: 1.3rem;
+        }
+
+        /* Navigation - ALL BLACK TEXT */
         .sidebar-nav {
             flex: 1;
-            padding: 12px 8px;
+            padding: 16px 12px;
             overflow-y: auto;
             overflow-x: hidden;
         }
 
         .nav-section {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .nav-section-title {
             font-size: 0.65rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--gray-600);
-            padding: 6px 10px;
-            opacity: 0.6;
+            letter-spacing: 0.8px;
+            color: #000000;
+            padding: 8px 10px;
+            margin-bottom: 4px;
         }
 
         .sidebar.collapsed .nav-section-title {
@@ -138,19 +179,19 @@
 
         .menu-item {
             margin-bottom: 2px;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
         }
 
         .menu-link {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 10px;
-            color: var(--gray-700);
+            gap: 12px;
+            padding: 10px 12px;
+            color: #000000;
             text-decoration: none;
             font-size: 0.85rem;
-            font-weight: 500;
-            border-radius: 8px;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
             transition: all 0.2s;
             cursor: pointer;
             background: none;
@@ -161,19 +202,22 @@
 
         .menu-link i {
             width: 20px;
-            font-size: 0.95rem;
-            color: var(--gray-600);
+            font-size: 1rem;
+            color: #000000;
             flex-shrink: 0;
         }
 
         .menu-link .label {
             flex: 1;
             transition: opacity 0.2s;
+            color: #000000;
+            font-weight: 600;
         }
 
         .menu-link .arrow {
             font-size: 0.65rem;
             transition: transform 0.25s;
+            color: #000000;
         }
 
         .menu-link[aria-expanded="true"] .arrow {
@@ -182,25 +226,30 @@
 
         .menu-item:hover .menu-link,
         .menu-item.active .menu-link {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: white;
+            background: var(--primary-soft);
+        }
+
+        .menu-item:hover .menu-link .label,
+        .menu-item.active .menu-link .label {
+            color: var(--primary-dark);
+            font-weight: 700;
         }
 
         .menu-item:hover .menu-link i,
         .menu-item.active .menu-link i {
-            color: white;
+            color: var(--primary);
         }
 
-        /* Submenu */
+        /* Submenu - ALL BLACK TEXT */
         .submenu {
-            padding-left: 32px;
+            padding-left: 36px;
             overflow: hidden;
             max-height: 0;
             transition: max-height 0.25s ease;
         }
 
         .submenu.show {
-            max-height: 200px;
+            max-height: 300px;
         }
 
         .sidebar.collapsed .submenu {
@@ -210,28 +259,38 @@
         .submenu-link {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 6px 10px;
-            color: var(--gray-600);
+            gap: 10px;
+            padding: 8px 12px;
+            color: #000000;
             font-size: 0.8rem;
+            font-weight: 500;
             text-decoration: none;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             transition: all 0.2s;
         }
 
         .submenu-link i {
             width: 14px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
+            color: #000000;
         }
 
         .submenu-link:hover,
         .submenu-link.active {
             background: var(--gray-100);
-            color: var(--primary);
-            transform: translateX(3px);
         }
 
-        /* Topbar */
+        .submenu-link:hover {
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        .submenu-link:hover i,
+        .submenu-link.active i {
+            color: var(--primary);
+        }
+
+        /* Topbar - ALL BLACK TEXT */
         .topbar {
             position: fixed;
             top: 0;
@@ -243,9 +302,10 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 24px;
             z-index: 1040;
             transition: left 0.25s ease;
+            box-shadow: var(--shadow-sm);
         }
 
         .sidebar.collapsed ~ .topbar {
@@ -255,16 +315,16 @@
         .topbar-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
         }
 
         .btn-toggle {
             background: none;
             border: none;
-            color: var(--gray-600);
+            color: #000000;
             font-size: 1.1rem;
-            padding: 6px;
-            border-radius: 6px;
+            padding: 8px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -276,25 +336,23 @@
 
         .page-title {
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 800;
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            gap: 8px;
+            color: #000000;
         }
 
         .page-title i {
             color: var(--primary);
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
 
         .topbar-right {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
             flex-shrink: 0;
         }
 
@@ -303,10 +361,11 @@
             background: none;
             border: none;
             font-size: 1.1rem;
-            color: var(--gray-600);
-            padding: 6px;
+            color: #000000;
+            padding: 8px;
             border-radius: 50%;
             cursor: pointer;
+            transition: all 0.2s;
         }
 
         .btn-bell:hover {
@@ -316,37 +375,41 @@
 
         .notif-count {
             position: absolute;
-            top: 0;
-            right: 0;
+            top: 2px;
+            right: 2px;
             background: var(--danger);
             color: white;
-            font-size: 0.55rem;
+            font-size: 0.5rem;
             min-width: 16px;
-            padding: 1px 4px;
+            height: 16px;
+            padding: 0 4px;
             border-radius: 20px;
             text-align: center;
+            line-height: 16px;
+            font-weight: 700;
         }
 
         .user-avatar {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             background: linear-gradient(135deg, var(--primary), var(--accent));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.2s;
             border: 2px solid white;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-sm);
             font-size: 0.9rem;
             flex-shrink: 0;
         }
 
         .user-avatar:hover {
-            transform: scale(1.02);
+            transform: scale(1.03);
+            box-shadow: var(--shadow-md);
         }
 
         .user-meta {
@@ -355,25 +418,29 @@
 
         .user-meta .name {
             font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--gray-700);
+            font-weight: 800;
+            color: #000000;
         }
 
         .user-meta .role {
             font-size: 0.65rem;
-            color: var(--gray-600);
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Dropdown Panels */
+        /* Dropdown Panels - ALL BLACK TEXT */
         .dropdown-panel {
             position: fixed;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
             z-index: 1060;
             display: none;
-            min-width: 220px;
+            min-width: 240px;
             overflow: hidden;
+            border: 1px solid var(--gray-200);
         }
 
         .dropdown-panel.show {
@@ -382,29 +449,30 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
+            from { opacity: 0; transform: translateY(-8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         #userDropdown {
-            top: calc(var(--topbar-h) + 5px);
-            right: 16px;
+            top: calc(var(--topbar-h) + 8px);
+            right: 20px;
         }
 
         #notifDropdown {
-            top: calc(var(--topbar-h) + 5px);
-            right: 70px;
-            width: 280px;
+            top: calc(var(--topbar-h) + 8px);
+            right: 80px;
+            width: 300px;
         }
 
         .dd-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            color: var(--gray-700);
+            gap: 12px;
+            padding: 10px 16px;
+            color: #000000;
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 600;
             transition: background 0.2s;
             border: none;
             background: none;
@@ -415,12 +483,13 @@
 
         .dd-item:hover {
             background: var(--gray-100);
+            color: var(--primary-dark);
         }
 
         .dd-item i {
             width: 18px;
-            font-size: 0.85rem;
-            color: var(--gray-600);
+            font-size: 0.9rem;
+            color: #000000;
         }
 
         .dd-item.danger {
@@ -434,7 +503,7 @@
         .dd-divider {
             height: 1px;
             background: var(--gray-200);
-            margin: 4px 0;
+            margin: 6px 0;
         }
 
         /* Main Content */
@@ -442,10 +511,16 @@
             position: relative;
             margin-left: var(--sidebar-w);
             margin-top: var(--topbar-h);
-            padding: 20px;
-            height: calc(100vh - var(--topbar-h));
+            padding: 24px;
+            min-height: calc(100vh - var(--topbar-h));
             overflow-y: auto;
             transition: margin-left 0.25s ease;
+            background: var(--gray-100);
+        }
+
+        /* Fix white space when sidebar collapsed */
+        .sidebar.collapsed ~ .main-content {
+            margin-left: var(--sidebar-w-sm);
         }
 
         .sidebar-overlay {
@@ -460,6 +535,17 @@
             display: block;
         }
 
+        /* Badge for pending count */
+        .badge-count {
+            background: var(--warning);
+            color: white;
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 20px;
+            margin-left: 8px;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -472,6 +558,7 @@
             }
             .topbar {
                 left: 0 !important;
+                padding: 0 16px;
             }
             .main-content {
                 margin-left: 0 !important;
@@ -482,6 +569,9 @@
             }
             .user-meta {
                 display: none;
+            }
+            .topbar-right {
+                gap: 12px;
             }
         }
 
@@ -499,10 +589,16 @@
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobile()"></div>
 
 <aside class="sidebar" id="sidebar">
-    <a href="{{ route('dashboard') }}" class="sidebar-logo">
-        <i class="fas fa-hand-holding-heart"></i>
-        <span>CHANGIA SMART</span>
-    </a>
+    <!-- Logo Container - Icon on top, text below -->
+    <div class="sidebar-logo-container">
+        <div class="sidebar-logo-icon">
+            <i class="fas fa-hand-holding-heart"></i>
+        </div>
+        <div class="sidebar-logo-text">
+            <div class="logo-main">CHANGIA SMART</div>
+            <div class="logo-sub">MICHANGO SYSTEM</div>
+        </div>
+    </div>
 
     <nav class="sidebar-nav">
         @php
@@ -517,7 +613,6 @@
 
         <!-- Dashboard -->
         <div class="nav-section">
-            
             <div class="menu-item @if(request()->routeIs('dashboard')) active @endif">
                 <a href="{{ route('dashboard') }}" class="menu-link">
                     <i class="fas fa-chart-line"></i>
@@ -540,8 +635,8 @@
                     <i class="fas fa-chevron-right arrow"></i>
                 </button>
                 <div class="submenu @if($eventsActive) show @endif" id="subEvents">
-                    <a href="{{ route('events.create') }}" class="submenu-link"><i class="fas fa-plus-circle"></i> Sajili</a>
-                    <a href="{{ route('events.index') }}" class="submenu-link"><i class="fas fa-list"></i> Orodha</a>
+                    <a href="{{ route('events.create') }}" class="submenu-link"><i class="fas fa-plus-circle"></i> Sajili Tukio</a>
+                    <a href="{{ route('events.index') }}" class="submenu-link"><i class="fas fa-list"></i> Orodha ya Matukio</a>
                 </div>
             </div>
             @else
@@ -558,7 +653,7 @@
         <!-- Contributors Section -->
         @if($hasEvents && $firstEvent)
         <div class="nav-section">
-            
+        
             @php $contribActive = request()->routeIs('contributors.*'); @endphp
             <div class="menu-item @if($contribActive) active @endif">
                 <button class="menu-link" onclick="toggleSub('subContrib', this)" aria-expanded="{{ $contribActive ? 'true' : 'false' }}">
@@ -567,8 +662,8 @@
                     <i class="fas fa-chevron-right arrow"></i>
                 </button>
                 <div class="submenu @if($contribActive) show @endif" id="subContrib">
-                    <a href="{{ route('contributors.create', $firstEvent->id) }}" class="submenu-link"><i class="fas fa-user-plus"></i> Sajili</a>
-                    <a href="{{ route('contributors.index', $firstEvent->id) }}" class="submenu-link"><i class="fas fa-address-book"></i> Orodha</a>
+                    <a href="{{ route('contributors.create', $firstEvent->id) }}" class="submenu-link"><i class="fas fa-user-plus"></i> Sajili Mchangiaji</a>
+                    <a href="{{ route('contributors.index', $firstEvent->id) }}" class="submenu-link"><i class="fas fa-address-book"></i> Orodha ya Wachangiaji</a>
                 </div>
             </div>
         </div>
@@ -592,7 +687,7 @@
                             })->count();
                     @endphp
                     @if($pendingCount > 0)
-                        <span class="badge bg-warning ms-2" style="background: var(--warning); color: white; padding: 2px 6px; border-radius: 20px; font-size: 0.65rem;">{{ $pendingCount }}</span>
+                        <span class="badge-count">{{ $pendingCount }}</span>
                     @endif
                 </a>
             </div>
@@ -602,7 +697,7 @@
         <!-- Mhasibu Management -->
         @if($isEventUser)
         <div class="nav-section">
-            
+    
             @php $mhasibuActive = request()->routeIs('mhasibu.*'); @endphp
             <div class="menu-item @if($mhasibuActive) active @endif">
                 <button class="menu-link" onclick="toggleSub('subMhasibu', this)" aria-expanded="{{ $mhasibuActive ? 'true' : 'false' }}">
@@ -611,8 +706,8 @@
                     <i class="fas fa-chevron-right arrow"></i>
                 </button>
                 <div class="submenu @if($mhasibuActive) show @endif" id="subMhasibu">
-                    <a href="{{ route('mhasibu.create') }}" class="submenu-link"><i class="fas fa-user-plus"></i> Sajili</a>
-                    <a href="{{ route('mhasibu.index') }}" class="submenu-link"><i class="fas fa-list"></i> Orodha</a>
+                    <a href="{{ route('mhasibu.create') }}" class="submenu-link"><i class="fas fa-user-plus"></i> Sajili Mhasibu</a>
+                    <a href="{{ route('mhasibu.index') }}" class="submenu-link"><i class="fas fa-list"></i> Orodha ya Mahasibu</a>
                 </div>
             </div>
         </div>
@@ -625,12 +720,12 @@
             <div class="menu-item @if($cardActive) active @endif">
                 <button class="menu-link" onclick="toggleSub('subCards', this)" aria-expanded="{{ $cardActive ? 'true' : 'false' }}">
                     <i class="fas fa-id-card"></i>
-                    <span class="label">Card za Mwaliko</span>
+                    <span class="label">Kadi za Mwaliko</span>
                     <i class="fas fa-chevron-right arrow"></i>
                 </button>
                 <div class="submenu @if($cardActive) show @endif" id="subCards">
-                    <a href="{{ route('cards.create') }}" class="submenu-link"><i class="fas fa-plus-circle"></i> Tengeneza</a>
-                    <a href="{{ route('cards.send') }}" class="submenu-link"><i class="fas fa-paper-plane"></i> Tuma</a>
+                    <a href="{{ route('cards.create') }}" class="submenu-link"><i class="fas fa-plus-circle"></i> Tengeneza Kadi</a>
+                    <a href="{{ route('cards.send') }}" class="submenu-link"><i class="fas fa-paper-plane"></i> Tuma Kadi</a>
                 </div>
             </div>
         </div>
@@ -646,8 +741,8 @@
                     <i class="fas fa-chevron-right arrow"></i>
                 </button>
                 <div class="submenu @if($ujumbeActive) show @endif" id="subUjumbe">
-                    <a href="{{ route('ujumbe.michango') }}" class="submenu-link"><i class="fas fa-hand-holding-heart"></i> Michango</a>
-                    <a href="{{ route('ujumbe.mwaliko') }}" class="submenu-link"><i class="fas fa-envelope-open-text"></i> Mwaliko</a>
+                    <a href="{{ route('ujumbe.michango') }}" class="submenu-link"><i class="fas fa-hand-holding-heart"></i> Ujumbe wa Michango</a>
+                    <a href="{{ route('ujumbe.mwaliko') }}" class="submenu-link"><i class="fas fa-envelope-open-text"></i> Ujumbe wa Mwaliko</a>
                 </div>
             </div>
         </div>
@@ -658,18 +753,18 @@
             <div class="menu-item @if(request()->routeIs('reports.*')) active @endif">
                 <a href="{{ route('reports.summary') }}" class="menu-link">
                     <i class="fas fa-file-alt"></i>
-                    <span class="label">Ripoti</span>
+                    <span class="label">Ripoti na Takwimu</span>
                 </a>
             </div>
         </div>
 
         <!-- Settings -->
         <div class="nav-section">
-            
+        
             <div class="menu-item @if(request()->routeIs('settings.*')) active @endif">
                 <a href="{{ route('settings.index') }}" class="menu-link">
                     <i class="fas fa-cog"></i>
-                    <span class="label">Mipangilio</span>
+                    <span class="label">Mipangilio ya Akaunti</span>
                 </a>
             </div>
         </div>
@@ -681,7 +776,7 @@
                     @csrf
                     <button type="submit" class="menu-link" style="color: var(--danger);">
                         <i class="fas fa-sign-out-alt"></i>
-                        <span class="label">Toka</span>
+                        <span class="label">Toka Mfumo</span>
                     </button>
                 </form>
             </div>
@@ -725,12 +820,12 @@
         <div class="dd-item">
             <i class="fas fa-info-circle"></i>
             <div style="flex:1">
-                <div style="font-weight:600;">{{ $notif->data['title'] ?? 'Arifa' }}</div>
-                <div style="font-size:0.7rem; color:var(--gray-600);">{{ $notif->created_at->diffForHumans() }}</div>
+                <div style="font-weight:700;">{{ $notif->data['title'] ?? 'Arifa' }}</div>
+                <div style="font-size:0.7rem; color:#000000;">{{ $notif->created_at->diffForHumans() }}</div>
             </div>
         </div>
     @empty
-        <div class="dd-item" style="justify-content:center; color:var(--gray-600);">Hakuna arifa mpya</div>
+        <div class="dd-item" style="justify-content:center; color:#000000;">Hakuna arifa mpya</div>
     @endforelse
     @if(auth()->user()?->unreadNotifications->count() > 5)
         <div class="dd-divider"></div>
@@ -740,12 +835,12 @@
 
 <!-- User Dropdown -->
 <div class="dropdown-panel" id="userDropdown">
-    <a href="{{ route('profile') }}" class="dd-item"><i class="fas fa-user"></i> Profaili</a>
+    <a href="{{ route('profile') }}" class="dd-item"><i class="fas fa-user"></i> Profaili Yangu</a>
     <a href="{{ route('settings.index') }}" class="dd-item"><i class="fas fa-cog"></i> Mipangilio</a>
     <div class="dd-divider"></div>
     <form method="POST" action="{{ route('logout') }}" id="logoutFormDropdown">
         @csrf
-        <button type="submit" class="dd-item danger"><i class="fas fa-sign-out-alt"></i> Toka</button>
+        <button type="submit" class="dd-item danger"><i class="fas fa-sign-out-alt"></i> Toka Mfumo</button>
     </form>
 </div>
 
@@ -784,6 +879,7 @@
         
         const isExpanded = submenu.classList.contains('show');
         
+        // Close other submenus
         document.querySelectorAll('.submenu').forEach(menu => {
             if (menu.id !== id && menu.classList.contains('show')) {
                 menu.classList.remove('show');

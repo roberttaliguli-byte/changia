@@ -703,4 +703,33 @@ private function notifyNewRegistration(Event $event, Contributor $contributor)
         // Implement SMS sending logic here
         Log::info("SMS to {$phone}: {$message}");
     }
+/**
+ * Get contributors for an event (API endpoint)
+ */
+public function getContributorsApi(Event $event)
+{
+    $this->authorizeEventAccess($event);
+    
+    $contributors = $event->contributors()
+        ->select('id', 'name', 'phone', 'email', 'promised_amount', 'paid_amount', 'remaining_amount', 'status')
+        ->get()
+        ->map(function($contributor) {
+            return [
+                'id' => $contributor->id,
+                'name' => $contributor->name,
+                'phone' => $contributor->phone,
+                'email' => $contributor->email,
+                'promised_amount' => (float) $contributor->promised_amount,
+                'paid_amount' => (float) $contributor->paid_amount,
+                'remaining_amount' => (float) $contributor->remaining_amount,
+                'status' => $contributor->status,
+                'status_text' => $contributor->getStatusDisplayAttribute(),
+                'status_badge' => $contributor->getStatusBadgeClassAttribute(),
+                'progress' => $contributor->getProgressPercentageAttribute()
+            ];
+        });
+    
+    return response()->json($contributors);
+}
+
 }

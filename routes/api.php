@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContributionController;
+use App\Http\Controllers\UjumbeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +19,7 @@ use App\Http\Controllers\ContributionController;
 Route::post('/register-contributor', [ContributionController::class, 'registerViaSMS'])->name('api.register.sms');
 Route::get('/contribution-link/{token}', [ContributionController::class, 'showContributionForm'])->name('api.contribution.form');
 Route::post('/submit-contribution', [ContributionController::class, 'submitViaLink'])->name('api.submit.contribution');
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/event/{eventId}/contributors', [UjumbeController::class, 'getEventContributors']);
+});
