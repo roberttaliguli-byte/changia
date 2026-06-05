@@ -9,11 +9,12 @@ use Illuminate\Support\Facades\Hash;
 
 class CreateAdminUser extends Command
 {
-    protected $signature = 'admin:create
-                            {--email= : Admin email address}
-                            {--name= : Admin name}
-                            {--phone= : Admin phone number}';
-    
+   protected $signature = 'admin:create
+                        {--email= : Admin email address}
+                        {--name= : Admin name}
+                        {--phone= : Admin phone number}
+                        {--password= : Admin password}';
+                        
     protected $description = 'Create a new admin user securely';
 
     public function handle()
@@ -40,19 +41,17 @@ class CreateAdminUser extends Command
             return 1;
         }
         
-        // Get password (hidden input)
-        $password = $this->secret('Enter admin password (min 8 characters)');
-        $passwordConfirmation = $this->secret('Confirm password');
-        
-        if ($password !== $passwordConfirmation) {
-            $this->error('Passwords do not match!');
-            return 1;
-        }
-        
-        if (strlen($password) < 8) {
-            $this->error('Password must be at least 8 characters!');
-            return 1;
-        }
+$password = $this->option('password');
+
+if (!$password) {
+    $this->error('Password is required.');
+    return 1;
+}
+
+if (strlen($password) < 8) {
+    $this->error('Password must be at least 8 characters!');
+    return 1;
+}
         
         // Create admin user
         try {
