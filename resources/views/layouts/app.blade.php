@@ -42,10 +42,11 @@
             box-sizing: border-box;
         }
 
-        html, body {
-            height: 100%;
-            overflow: hidden;
-        }
+       html, body {
+    overflow: auto !important;
+    height: auto !important;
+    min-height: 100vh;
+}
 
         body {
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;

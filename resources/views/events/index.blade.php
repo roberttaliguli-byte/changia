@@ -35,33 +35,45 @@
         font-family: 'Inter', sans-serif;
     }
     
-    /* FIX SCROLLING - Full height with proper bottom scroll on mobile */
-    .main-content {
-        overflow-y: auto !important;
-        height: calc(100vh - var(--topbar-h, 60px));
-        padding-bottom: 30px;
+    /* OVERRIDE app.blade.php overflow - FIXED SCROLLING */
+    html, body {
+        overflow: auto !important;
+        height: auto !important;
+        min-height: 100vh;
     }
     
-    /* Mobile scroll fix - ensures full bottom reach */
+    /* MAIN CONTENT - NATURAL SCROLLING */
+    .main-content {
+        margin-left: 240px;
+        transition: margin-left 0.25s ease;
+        min-height: 100vh;
+        background: var(--bg-light);
+        overflow: visible !important;
+        height: auto !important;
+        padding-bottom: 50px;
+    }
+    
+    /* When sidebar is collapsed */
+    .sidebar.collapsed ~ .main-content {
+        margin-left: 70px;
+    }
+    
+    /* Mobile - NO SIDEBAR MARGIN */
     @media (max-width: 768px) {
         .main-content {
+            margin-left: 0 !important;
             height: auto !important;
             min-height: 100vh;
-            overflow-y: visible !important;
+            overflow: visible !important;
             padding-bottom: 50px;
-        }
-        html, body {
-            height: auto;
-            overflow-x: hidden;
-        }
-        body {
-            overflow-y: auto !important;
         }
     }
     
-    /* Full width container - NO CENTERING */
+    /* Full width container */
     .events-container {
         width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
         padding: 24px 32px;
     }
     
@@ -111,7 +123,7 @@
         color: white;
     }
     
-    /* Stats Grid - Full width */
+    /* Stats Grid */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -186,7 +198,7 @@
     .bg-info-soft { background: rgba(59, 130, 246, 0.1); color: var(--info); }
     .bg-warning-soft { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
     
-    /* Filter Card - Full width */
+    /* Filter Card */
     .filter-card {
         background: white;
         border-radius: var(--radius-md);
@@ -267,7 +279,7 @@
         background: var(--text-secondary);
     }
     
-    /* Events Grid - Full width responsive */
+    /* Events Grid */
     .events-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -416,6 +428,8 @@
         align-items: center;
         margin-top: auto;
         padding-top: 12px;
+        flex-wrap: wrap;
+        gap: 10px;
     }
     
     .contributors-count {
@@ -718,7 +732,7 @@
         margin-bottom: 20px;
     }
     
-    /* Responsive - ensures full scroll to bottom */
+    /* Responsive */
     @media (max-width: 1024px) {
         .events-container {
             padding: 20px 24px;
@@ -793,6 +807,13 @@
         .amounts-grid .text-end {
             text-align: left;
         }
+        .event-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .action-buttons {
+            justify-content: center;
+        }
     }
 </style>
 @endpush
@@ -810,7 +831,7 @@
         </button>
     </div>
     
-    <!-- Stats - FIXED: Now shows remaining amount from target -->
+    <!-- Stats -->
     @php
         $totalEvents = $events->total();
         $activeEvents = $events->where('status', 'active')->count();
@@ -953,7 +974,6 @@
                         </div>
                         
                         <div class="event-footer">
-                          
                             <div class="action-buttons">
                                 <a href="{{ route('contributors.index', $event->id) }}" class="btn-icon btn-view">
                                     <i class="fas fa-eye"></i> Tazama
@@ -1121,6 +1141,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Create Modal
     function openCreateModal() {
@@ -1235,15 +1256,13 @@
             Swal.close();
             
             if (data.success) {
-                const shareText = `Karibu kuchangia katika tukio letu!\n\nBonyeza link hii kusajili na kuahidi mchango wako:\n${data.link}\n\nAsante kwa ushirikiano wako!`;
-                
                 Swal.fire({
                     title: 'Kiungo cha Usajili',
                     html: `
                         <div style="text-align: center;">
-                            <img src="${data.qr_code}" style="width: 150px; height: 150px; margin-bottom: 15px; border-radius: 10px;">
+                            ${data.qr_code ? `<img src="${data.qr_code}" style="width: 150px; height: 150px; margin-bottom: 15px; border-radius: 10px;"><br>` : ''}
                             <p style="font-size: 0.8rem; word-break: break-all; background: #f3f4f6; padding: 10px; border-radius: 8px;">${data.link}</p>
-                            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
                                 <button onclick="copyToClipboard('${data.link}')" class="swal2-confirm swal2-styled" style="background: #3B82F6;">
                                     <i class="fas fa-copy"></i> Nakili
                                 </button>
@@ -1258,7 +1277,7 @@
                     confirmButtonColor: '#FF6F00'
                 });
             } else {
-                Swal.fire('Hitilafu', 'Imeshindwa kuunda kiungo. Jaribu tena.', 'error');
+                Swal.fire('Hitilafu', data.message || 'Imeshindwa kuunda kiungo. Jaribu tena.', 'error');
             }
         } catch (error) {
             Swal.close();
@@ -1285,6 +1304,13 @@
     function shareViaWhatsApp(link) {
         const message = encodeURIComponent(`Karibu kuchangia katika tukio letu!\n\nBonyeza link hii kusajili na kuahidi mchango wako:\n${link}\n\nAsante kwa ushirikiano wako!`);
         window.open(`https://wa.me/?text=${message}`, '_blank');
+    }
+    
+    // Fix scroll on body when modals close
+    function fixBodyScroll() {
+        if (!document.querySelector('.modal-custom.active')) {
+            document.body.style.overflow = '';
+        }
     }
 </script>
 @endsection
