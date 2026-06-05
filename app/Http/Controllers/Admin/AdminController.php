@@ -12,9 +12,10 @@ use App\Models\Contribution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;  // ADD THIS
-use Illuminate\Support\Facades\Log;    // ADD THIS
-use Illuminate\Support\Str;            // ADD THIS
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
 class AdminController extends Controller
 {
     /**
@@ -44,11 +45,11 @@ class AdminController extends Controller
         $recentUsers = User::latest()->take(5)->get();
         $recentEvents = Event::with('user')->latest()->take(5)->get();
         
-        // Monthly Stats for Chart
+        // Monthly Stats for Chart - POSTGRESQL COMPATIBLE
         $monthlyStats = DB::table('contributions')
             ->select(
-                DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
-                DB::raw('SUM(CASE WHEN status = "approved" THEN amount ELSE 0 END) as total')
+                DB::raw("TO_CHAR(created_at, 'YYYY-MM') as month"),
+                DB::raw("SUM(CASE WHEN status = 'approved' THEN amount ELSE 0 END) as total")
             )
             ->where('status', 'approved')
             ->groupBy('month')
@@ -309,7 +310,11 @@ class AdminController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-
+    /**
+     * ============================================
+     * SMS MANAGEMENT
+     * ============================================
+     */
     
     public function smsManagement()
     {
@@ -337,15 +342,16 @@ class AdminController extends Controller
 
     /**
      * ============================================
-     * REPORTS
+     * REPORTS - POSTGRESQL COMPATIBLE
      * ============================================
      */
     
     public function reports()
     {
+        // Monthly Stats - POSTGRESQL COMPATIBLE
         $monthlyStats = DB::table('contributions')
             ->select(
-                DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
+                DB::raw("TO_CHAR(created_at, 'YYYY-MM') as month"),
                 DB::raw('COUNT(*) as count'),
                 DB::raw('SUM(amount) as total')
             )
@@ -384,8 +390,9 @@ class AdminController extends Controller
             ->groupBy('status')
             ->get();
         
+        // Monthly Events - POSTGRESQL COMPATIBLE
         $monthlyEvents = Event::select(
-                DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
+                DB::raw("TO_CHAR(created_at, 'YYYY-MM') as month"),
                 DB::raw('count(*) as count')
             )
             ->groupBy('month')
@@ -460,280 +467,292 @@ class AdminController extends Controller
         
         return redirect()->route('admin.settings')->with('success', 'Mipangilio imehifadhiwa kikamilifu.');
     }
+
     /**
- * Card Management - List all card requests
- */
-public function cards(Request $request)
-{
-    $query = Card::with('user');
+     * ============================================
+     * CARD MANAGEMENT
+     * ============================================
+     */
     
-    if ($request->has('card_type') && $request->card_type != '') {
-        $query->where('card_type', $request->card_type);
-    }
-    
-    if ($request->has('admin_status') && $request->admin_status != '') {
-        $query->where('admin_status', $request->admin_status);
-    }
-    
-    if ($request->has('search') && $request->search != '') {
-        $search = $request->search;
-        $query->where(function($q) use ($search) {
-            $q->where('title', 'like', "%{$search}%")
-              ->orWhereHas('user', function($uq) use ($search) {
-                  $uq->where('name', 'like', "%{$search}%")
-                     ->orWhere('phone', 'like', "%{$search}%");
-              });
-        });
-    }
-    
-    $cards = $query->latest()->paginate(15);
-    
-    return view('admin.cards', compact('cards'));
-}
-
-/**
- * Get card details for modal
- */
-public function getCardDetails($id)
-{
-    $card = Card::with('user')->findOrFail($id);
-    
-    // Generate correct image URL
-    $imageUrl = null;
-    if ($card->design_file_path && file_exists(storage_path('app/public/' . $card->design_file_path))) {
-        $imageUrl = asset('storage/' . $card->design_file_path);
-    }
-    
-    return response()->json([
-        'id' => $card->id,
-        'title' => $card->title,
-        'card_type' => $card->card_type,
-        'groom_name' => $card->groom_name,
-        'bride_name' => $card->bride_name,
-        'honoree_name' => $card->honoree_name,
-        'event_date' => $card->event_date ? $card->event_date->format('d/m/Y') : '-',
-        'event_time' => $card->event_time ? date('h:i A', strtotime($card->event_time)) : '-',
-        'location' => $card->location,
-        'description' => $card->description,
-        'suggested_amount' => $card->suggested_amount,
-        'contact_phone' => $card->contact_phone,
-        'contact_email' => $card->contact_email,
-        'views' => $card->views,
-        'shares' => $card->shares,
-        'admin_status' => $card->admin_status,
-        'admin_notes' => $card->admin_notes,
-        'design_file_path' => $card->design_file_path,
-        'design_file_url' => $imageUrl,  // Add this for easy access
-        'design_cost' => $card->design_cost,
-        'created_at' => $card->created_at->format('d/m/Y H:i'),
-        'user' => [
-            'name' => $card->user->name,
-            'phone' => $card->user->phone,
-            'email' => $card->user->email
-        ]
-    ]);
-}
-
-/**
- * Process card request (approve/reject/complete)
- */
-public function processCard(Request $request, $id)
-{
-    $card = Card::findOrFail($id);
-    
-    $request->validate([
-        'admin_status' => 'required|in:pending,approved,rejected,completed'
-    ]);
-    
-    $card->admin_status = $request->admin_status;
-    $card->admin_notes = $request->admin_notes;
-    $card->admin_processed_at = now();
-    $card->processed_by = auth()->id();
-    
-    if ($request->has('design_cost') && $request->design_cost) {
-        $card->design_cost = $request->design_cost;
-    }
-    
-    // Handle file upload correctly
-    if ($request->hasFile('design_file')) {
-        $file = $request->file('design_file');
+    /**
+     * Card Management - List all card requests
+     */
+    public function cards(Request $request)
+    {
+        $query = Card::with('user');
         
-        // Check if file is valid
-        if ($file->isValid()) {
-            // Generate unique filename
-            $filename = 'card_' . $card->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+        if ($request->has('card_type') && $request->card_type != '') {
+            $query->where('card_type', $request->card_type);
+        }
+        
+        if ($request->has('admin_status') && $request->admin_status != '') {
+            $query->where('admin_status', $request->admin_status);
+        }
+        
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%")
+                         ->orWhere('phone', 'like', "%{$search}%");
+                  });
+            });
+        }
+        
+        $cards = $query->latest()->paginate(15);
+        
+        return view('admin.cards', compact('cards'));
+    }
+
+    /**
+     * Get card details for modal
+     */
+    public function getCardDetails($id)
+    {
+        $card = Card::with('user')->findOrFail($id);
+        
+        // Generate correct image URL
+        $imageUrl = null;
+        if ($card->design_file_path && file_exists(storage_path('app/public/' . $card->design_file_path))) {
+            $imageUrl = asset('storage/' . $card->design_file_path);
+        }
+        
+        return response()->json([
+            'id' => $card->id,
+            'title' => $card->title,
+            'card_type' => $card->card_type,
+            'groom_name' => $card->groom_name,
+            'bride_name' => $card->bride_name,
+            'honoree_name' => $card->honoree_name,
+            'event_date' => $card->event_date ? $card->event_date->format('d/m/Y') : '-',
+            'event_time' => $card->event_time ? date('h:i A', strtotime($card->event_time)) : '-',
+            'location' => $card->location,
+            'description' => $card->description,
+            'suggested_amount' => $card->suggested_amount,
+            'contact_phone' => $card->contact_phone,
+            'contact_email' => $card->contact_email,
+            'views' => $card->views,
+            'shares' => $card->shares,
+            'admin_status' => $card->admin_status,
+            'admin_notes' => $card->admin_notes,
+            'design_file_path' => $card->design_file_path,
+            'design_file_url' => $imageUrl,
+            'design_cost' => $card->design_cost,
+            'created_at' => $card->created_at->format('d/m/Y H:i'),
+            'user' => [
+                'name' => $card->user->name,
+                'phone' => $card->user->phone,
+                'email' => $card->user->email
+            ]
+        ]);
+    }
+
+    /**
+     * Process card request (approve/reject/complete)
+     */
+    public function processCard(Request $request, $id)
+    {
+        $card = Card::findOrFail($id);
+        
+        $request->validate([
+            'admin_status' => 'required|in:pending,approved,rejected,completed'
+        ]);
+        
+        $card->admin_status = $request->admin_status;
+        $card->admin_notes = $request->admin_notes;
+        $card->admin_processed_at = now();
+        $card->processed_by = auth()->id();
+        
+        if ($request->has('design_cost') && $request->design_cost) {
+            $card->design_cost = $request->design_cost;
+        }
+        
+        // Handle file upload correctly
+        if ($request->hasFile('design_file')) {
+            $file = $request->file('design_file');
             
-            // Store the file
-            $path = $file->storeAs('cards/designs', $filename, 'public');
-            
-            if ($path) {
-                // Save the relative path
-                $card->design_file_path = 'cards/designs/' . $filename;
+            // Check if file is valid
+            if ($file->isValid()) {
+                // Generate unique filename
+                $filename = 'card_' . $card->id . '_' . time() . '.' . $file->getClientOriginalExtension();
                 
-                // Log success
-                \Log::info('File uploaded successfully: ' . $path);
-                \Log::info('Full storage path: ' . storage_path('app/public/' . $card->design_file_path));
+                // Store the file
+                $path = $file->storeAs('cards/designs', $filename, 'public');
+                
+                if ($path) {
+                    // Save the relative path
+                    $card->design_file_path = 'cards/designs/' . $filename;
+                    
+                    // Log success
+                    Log::info('File uploaded successfully: ' . $path);
+                    Log::info('Full storage path: ' . storage_path('app/public/' . $card->design_file_path));
+                } else {
+                    Log::error('Failed to store file');
+                }
             } else {
-                \Log::error('Failed to store file');
+                Log::error('Uploaded file is not valid');
             }
         } else {
-            \Log::error('Uploaded file is not valid');
-        }
-    } else {
-        \Log::info('No file was uploaded');
-    }
-    
-    $card->save();
-    
-    // Notify card owner
-    $this->notifyCardOwner($card);
-    
-    return redirect()->route('admin.cards')->with('success', 'Ombi la kadi limebadilishwa kikamilifu.');
-}
-
-/**
- * Delete card
- */
-public function deleteCard($id)
-{
-    $card = Card::findOrFail($id);
-    $card->delete();
-    
-    return redirect()->route('admin.cards')->with('success', 'Kadi imefutwa kikamilifu.');
-}
-
-/**
- * Download cards as CSV
- */
-public function downloadCards(Request $request)
-{
-    $query = Card::with('user');
-    
-    if ($request->has('card_type') && $request->card_type != '') {
-        $query->where('card_type', $request->card_type);
-    }
-    
-    if ($request->has('admin_status') && $request->admin_status != '') {
-        $query->where('admin_status', $request->admin_status);
-    }
-    
-    if ($request->has('search') && $request->search != '') {
-        $search = $request->search;
-        $query->where(function($q) use ($search) {
-            $q->where('title', 'like', "%{$search}%")
-              ->orWhereHas('user', function($uq) use ($search) {
-                  $uq->where('name', 'like', "%{$search}%");
-              });
-        });
-    }
-    
-    $cards = $query->latest()->get();
-    
-    $headers = [
-        'Content-Type' => 'text/csv',
-        'Content-Disposition' => 'attachment; filename="maombi_kadi_' . date('Y-m-d_His') . '.csv"',
-    ];
-    
-    $callback = function() use ($cards) {
-        $file = fopen('php://output', 'w');
-        fputs($file, "\xEF\xBB\xBF");
-        
-        fputcsv($file, [
-            'ID', 'Jina la Kadi', 'Aina', 'Mwombaji', 'Simu ya Mwombaji',
-            'Tarehe ya Tukio', 'Mahali', 'Hali', 'Tarehe ya Ombi'
-        ]);
-        
-        foreach ($cards as $card) {
-            fputcsv($file, [
-                $card->id,
-                $card->title,
-                $card->card_type == 'invitation' ? 'Mwaliko' : 'Mchango',
-                $card->user->name ?? '-',
-                $card->user->phone ?? '-',
-                $card->event_date ? $card->event_date->format('d/m/Y') : '-',
-                $card->location,
-                $card->admin_status,
-                $card->created_at->format('d/m/Y H:i')
-            ]);
+            Log::info('No file was uploaded');
         }
         
-        fclose($file);
-    };
-    
-    return response()->stream($callback, 200, $headers);
-}
+        $card->save();
+        
+        // Notify card owner
+        $this->notifyCardOwner($card);
+        
+        return redirect()->route('admin.cards')->with('success', 'Ombi la kadi limebadilishwa kikamilifu.');
+    }
 
-/**
- * Notify card owner about status change
- */
-private function notifyCardOwner($card)
-{
-    try {
-        $statusMessages = [
-            'approved' => 'Ombi lako la kadi limeidhinishwa. Tunasubiri kubuniwa.',
-            'rejected' => 'Ombi lako la kadi limekataliwa. Sababu: ' . ($card->admin_notes ?? 'Hakuna sababu iliyotolewa'),
-            'completed' => 'Kadi yako imekamilika. Unaweza kuitumia kwa kushiriki kiungo.'
+    /**
+     * Delete card
+     */
+    public function deleteCard($id)
+    {
+        $card = Card::findOrFail($id);
+        $card->delete();
+        
+        return redirect()->route('admin.cards')->with('success', 'Kadi imefutwa kikamilifu.');
+    }
+
+    /**
+     * Download cards as CSV
+     */
+    public function downloadCards(Request $request)
+    {
+        $query = Card::with('user');
+        
+        if ($request->has('card_type') && $request->card_type != '') {
+            $query->where('card_type', $request->card_type);
+        }
+        
+        if ($request->has('admin_status') && $request->admin_status != '') {
+            $query->where('admin_status', $request->admin_status);
+        }
+        
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+        
+        $cards = $query->latest()->get();
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="maombi_kadi_' . date('Y-m-d_His') . '.csv"',
         ];
         
-        $message = $statusMessages[$card->admin_status] ?? 'Hali ya ombi lako la kadi imebadilika.';
+        $callback = function() use ($cards) {
+            $file = fopen('php://output', 'w');
+            fputs($file, "\xEF\xBB\xBF");
+            
+            fputcsv($file, [
+                'ID', 'Jina la Kadi', 'Aina', 'Mwombaji', 'Simu ya Mwombaji',
+                'Tarehe ya Tukio', 'Mahali', 'Hali', 'Tarehe ya Ombi'
+            ]);
+            
+            foreach ($cards as $card) {
+                fputcsv($file, [
+                    $card->id,
+                    $card->title,
+                    $card->card_type == 'invitation' ? 'Mwaliko' : 'Mchango',
+                    $card->user->name ?? '-',
+                    $card->user->phone ?? '-',
+                    $card->event_date ? $card->event_date->format('d/m/Y') : '-',
+                    $card->location,
+                    $card->admin_status,
+                    $card->created_at->format('d/m/Y H:i')
+                ]);
+            }
+            
+            fclose($file);
+        };
         
-        // Send WhatsApp message to card owner
-        $this->sendWhatsAppMessage($card->user->phone, "CHANGIA SMART: " . $message);
-        
-    } catch (\Exception $e) {
-        Log::error('Failed to notify card owner: ' . $e->getMessage());
+        return response()->stream($callback, 200, $headers);
     }
-}
 
-/**
- * Send WhatsApp message
- */
-private function sendWhatsAppMessage($phone, $message)
-{
-    try {
-        $apiUrl = env('WHATSAPP_API_URL', 'https://messaging-service.co.tz/api/whatsapp/v2/text/single');
-        $token = env('WHATSAPP_TOKEN');
+    /**
+     * ============================================
+     * PRIVATE HELPER METHODS
+     * ============================================
+     */
+    
+    /**
+     * Notify card owner about status change
+     */
+    private function notifyCardOwner($card)
+    {
+        try {
+            $statusMessages = [
+                'approved' => 'Ombi lako la kadi limeidhinishwa. Tunasubiri kubuniwa.',
+                'rejected' => 'Ombi lako la kadi limekataliwa. Sababu: ' . ($card->admin_notes ?? 'Hakuna sababu iliyotolewa'),
+                'completed' => 'Kadi yako imekamilika. Unaweza kuitumia kwa kushiriki kiungo.'
+            ];
+            
+            $message = $statusMessages[$card->admin_status] ?? 'Hali ya ombi lako la kadi imebadilika.';
+            
+            // Send WhatsApp message to card owner
+            $this->sendWhatsAppMessage($card->user->phone, "CHANGIA SMART: " . $message);
+            
+        } catch (\Exception $e) {
+            Log::error('Failed to notify card owner: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Send WhatsApp message
+     */
+    private function sendWhatsAppMessage($phone, $message)
+    {
+        try {
+            $apiUrl = env('WHATSAPP_API_URL', 'https://messaging-service.co.tz/api/whatsapp/v2/text/single');
+            $token = env('WHATSAPP_TOKEN');
+            
+            if (!$apiUrl || !$token) {
+                Log::info("WhatsApp message to {$phone}: " . $message);
+                return true;
+            }
+            
+            $phone = $this->cleanPhoneNumber($phone);
+            
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type' => 'application/json',
+            ])->post($apiUrl, [
+                'recipient' => $phone,
+                'message' => $message,
+                'account' => env('WHATSAPP_ACCOUNT', 'BST CEO')
+            ]);
+            
+            return $response->successful();
+        } catch (\Exception $e) {
+            Log::error('WhatsApp send error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Clean phone number
+     */
+    private function cleanPhoneNumber($phone)
+    {
+        $phone = preg_replace('/[^0-9+]/', '', $phone);
+        $phone = ltrim($phone, '+');
         
-        if (!$apiUrl || !$token) {
-            Log::info("WhatsApp message to {$phone}: " . $message);
-            return true;
+        if (substr($phone, 0, 1) === '0') {
+            $phone = '255' . substr($phone, 1);
         }
         
-        $phone = $this->cleanPhoneNumber($phone);
+        if (strlen($phone) === 9) {
+            $phone = '255' . $phone;
+        }
         
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-            'Content-Type' => 'application/json',
-        ])->post($apiUrl, [
-            'recipient' => $phone,
-            'message' => $message,
-            'account' => env('WHATSAPP_ACCOUNT', 'BST CEO')
-        ]);
-        
-        return $response->successful();
-    } catch (\Exception $e) {
-        Log::error('WhatsApp send error: ' . $e->getMessage());
-        return false;
+        return $phone;
     }
-}
-
-/**
- * Clean phone number
- */
-private function cleanPhoneNumber($phone)
-{
-    $phone = preg_replace('/[^0-9+]/', '', $phone);
-    $phone = ltrim($phone, '+');
-    
-    if (substr($phone, 0, 1) === '0') {
-        $phone = '255' . substr($phone, 1);
-    }
-    
-    if (strlen($phone) === 9) {
-        $phone = '255' . $phone;
-    }
-    
-    return $phone;
-}
-
 }
