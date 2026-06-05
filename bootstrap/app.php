@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register middleware aliases
         $middleware->alias([
             'role' => RoleMiddleware::class,
-            'permission' => ChangiaMiddleware::class,
+            'changia' => ChangiaMiddleware::class,  // CHANGE THIS LINE from 'permission' to 'changia'
         ]);
         
         // Add rate limiting middleware
