@@ -14,7 +14,7 @@ class CreateAdminUser extends Command
                         {--name= : Admin name}
                         {--phone= : Admin phone number}
                         {--password= : Admin password}';
-                        
+
     protected $description = 'Create a new admin user securely';
 
     public function handle()
@@ -78,3 +78,4 @@ if (strlen($password) < 8) {
         }
     }
 }
+

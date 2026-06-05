@@ -93,16 +93,18 @@ class AuthController extends Controller
     /**
      * Redirect user based on role
      */
-    protected function redirectBasedOnRole($user)
-    {
-        $message = 'Karibu tena, ' . $user->name . '!';
-        
-        return match($user->role) {
-            'admin' => redirect()->route('admin.dashboard')->with('success', $message),
-            'accountant' => redirect()->route('accountant.dashboard')->with('success', $message),
-            default => redirect()->route('dashboard')->with('success', $message),
-        };
-    }
+// In app/Http/Controllers/AuthController.php
+
+protected function redirectBasedOnRole($user)
+{
+    $message = 'Karibu tena, ' . $user->name . '!';
+    
+    return match($user->role) {
+        'admin' => redirect()->route('admin.dashboard')->with('success', $message),
+        'accountant' => redirect()->route('mhasibu.confirm')->with('success', $message), // Changed this line
+        default => redirect()->route('dashboard')->with('success', $message),
+    };
+}
 
     /**
      * Show registration form
