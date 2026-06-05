@@ -30,6 +30,30 @@
         font-family: 'Inter', sans-serif;
     }
     
+    /* FIXED SCROLLING - Full height with proper bottom scroll on mobile */
+    .main-content {
+        overflow-y: auto !important;
+        height: calc(100vh - var(--topbar-h, 60px));
+        padding-bottom: 30px;
+    }
+    
+    /* Mobile scroll fix - ensures full bottom reach */
+    @media (max-width: 768px) {
+        .main-content {
+            height: auto !important;
+            min-height: 100vh;
+            overflow-y: visible !important;
+            padding-bottom: 50px;
+        }
+        html, body {
+            height: auto;
+            overflow-x: hidden;
+        }
+        body {
+            overflow-y: auto !important;
+        }
+    }
+    
     /* Full width container - NO CENTERING like dashboard */
     .create-container {
         width: 100%;
@@ -310,7 +334,21 @@
         margin-bottom: 0;
     }
     
-    /* Responsive */
+    /* Loading spinner */
+    .spinner-border-sm {
+        width: 12px;
+        height: 12px;
+        border-width: 2px;
+        display: inline-block;
+        border-radius: 50%;
+        animation: spinner-border 0.75s linear infinite;
+    }
+    
+    @keyframes spinner-border {
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Responsive - ensures full scroll to bottom */
     @media (max-width: 1024px) {
         .create-container {
             padding: 20px 24px;
@@ -319,7 +357,7 @@
     
     @media (max-width: 768px) {
         .create-container {
-            padding: 16px;
+            padding: 16px 16px 40px 16px;
         }
         
         .form-grid {
@@ -359,12 +397,13 @@
         
         .info-box {
             padding: 12px;
+            margin-bottom: 20px;
         }
     }
     
     @media (max-width: 480px) {
         .create-container {
-            padding: 12px;
+            padding: 12px 12px 40px 12px;
         }
         
         .form-body {
@@ -480,6 +519,7 @@
                             </label>
                             <input type="number" 
                                    name="target_amount" 
+                                   id="target_amount"
                                    class="form-control" 
                                    value="{{ old('target_amount') }}"
                                    min="0" 
@@ -507,7 +547,7 @@
                                 Hali ya Tukio
                             </label>
                             <div style="padding: 8px 12px; background: var(--bg-light); border-radius: var(--radius-sm);">
-                                <span class="status-badge" style="display: inline-flex; align-items: center; gap: 6px; background: #D1FAE5; color: #10B981; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">
+                                <span style="display: inline-flex; align-items: center; gap: 6px; background: #D1FAE5; color: #10B981; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;">
                                     <i class="fas fa-play"></i> Inaendelea (Chaguo-msingi)
                                 </span>
                             </div>
@@ -559,7 +599,7 @@
 <script>
     // Function to set target amount
     function setTargetAmount(amount) {
-        const targetInput = document.querySelector('input[name="target_amount"]');
+        const targetInput = document.getElementById('target_amount');
         if (targetInput) {
             targetInput.value = amount;
             targetInput.style.borderColor = 'var(--primary)';
@@ -570,34 +610,76 @@
     }
     
     // Auto-fill event name suggestion based on selected type
-    document.querySelector('select[name="event_type"]')?.addEventListener('change', function() {
-        const selected = this.value;
-        const eventNameInput = document.querySelector('input[name="event_name"]');
-        
-        if (selected && !eventNameInput.value.trim()) {
-            const suggestions = {
-                'harusi': 'Harusi ya ',
-                'sendoff': 'Send-off ya ',
-                'birthday': 'Siku ya Kuzaliwa ya ',
-                'graduation': 'Graduation ya ',
-                'kitchen': 'Kitchen Party ya ',
-                'baby': 'Baby Shower ya ',
-                'fundraising': 'Harambee ya ',
-                'other': 'Sherehe ya '
-            };
+    const eventTypeSelect = document.querySelector('select[name="event_type"]');
+    if (eventTypeSelect) {
+        eventTypeSelect.addEventListener('change', function() {
+            const selected = this.value;
+            const eventNameInput = document.querySelector('input[name="event_name"]');
             
-            if (suggestions[selected]) {
-                eventNameInput.value = suggestions[selected];
-                eventNameInput.focus();
-                // Move cursor to end of text
-                eventNameInput.setSelectionRange(eventNameInput.value.length, eventNameInput.value.length);
+            if (selected && !eventNameInput.value.trim()) {
+                const suggestions = {
+                    'harusi': 'Harusi ya ',
+                    'sendoff': 'Send-off ya ',
+                    'birthday': 'Siku ya Kuzaliwa ya ',
+                    'graduation': 'Graduation ya ',
+                    'kitchen': 'Kitchen Party ya ',
+                    'baby': 'Baby Shower ya ',
+                    'fundraising': 'Harambee ya ',
+                    'other': 'Sherehe ya '
+                };
+                
+                if (suggestions[selected]) {
+                    eventNameInput.value = suggestions[selected];
+                    eventNameInput.focus();
+                    // Move cursor to end of text
+                    eventNameInput.setSelectionRange(eventNameInput.value.length, eventNameInput.value.length);
+                }
             }
-        }
-    });
+        });
+    }
     
     // Form validation
     const form = document.getElementById('createEventForm');
     const submitBtn = document.getElementById('submitBtn');
+    
+    function showError(message) {
+        // Check if error alert already exists
+        let errorAlert = document.querySelector('.error-alert');
+        const container = document.querySelector('.form-body');
+        
+        if (!errorAlert && container) {
+            const newAlert = document.createElement('div');
+            newAlert.className = 'error-alert';
+            newAlert.innerHTML = `
+                <div class="error-alert-content">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>${message}</span>
+                </div>
+                <div class="btn-close-custom" onclick="this.closest('.error-alert').remove()">
+                    <i class="fas fa-times"></i>
+                </div>
+            `;
+            container.insertBefore(newAlert, container.firstChild);
+            errorAlert = newAlert;
+        } else if (errorAlert) {
+            const errorSpan = errorAlert.querySelector('.error-alert-content span');
+            if (errorSpan) errorSpan.textContent = message;
+        }
+        
+        // Scroll to error
+        if (errorAlert) {
+            errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            const alert = document.querySelector('.error-alert');
+            if (alert) {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            }
+        }, 5000);
+    }
     
     if (form) {
         form.addEventListener('submit', function(e) {
@@ -618,46 +700,10 @@
                 // Show loading state
                 if (submitBtn) {
                     submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" style="width: 12px; height: 12px;"></span> Inahifadhi...';
+                    submitBtn.innerHTML = '<span class="spinner-border-sm" style="width:12px;height:12px;border:2px solid white;border-right-color:transparent;border-radius:50%;display:inline-block;animation:spinner-border 0.75s linear infinite;margin-right:8px;"></span> Inahifadhi...';
                 }
             }
         });
-    }
-    
-    function showError(message) {
-        // Check if error alert already exists
-        let errorAlert = document.querySelector('.error-alert');
-        const container = document.querySelector('.form-body');
-        
-        if (!errorAlert && container) {
-            const newAlert = document.createElement('div');
-            newAlert.className = 'error-alert';
-            newAlert.innerHTML = `
-                <div class="error-alert-content">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>${message}</span>
-                </div>
-                <div class="btn-close-custom" onclick="this.closest('.error-alert').remove()">
-                    <i class="fas fa-times"></i>
-                </div>
-            `;
-            container.insertBefore(newAlert, container.firstChild);
-        } else if (errorAlert) {
-            const errorSpan = errorAlert.querySelector('.error-alert-content span');
-            if (errorSpan) errorSpan.textContent = message;
-        }
-        
-        // Scroll to error
-        errorAlert?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        // Auto-dismiss after 5 seconds
-        setTimeout(() => {
-            const alert = document.querySelector('.error-alert');
-            if (alert) {
-                alert.style.opacity = '0';
-                setTimeout(() => alert.remove(), 300);
-            }
-        }, 5000);
     }
     
     // Set min date to today

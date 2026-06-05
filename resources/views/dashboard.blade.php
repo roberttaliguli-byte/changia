@@ -6,7 +6,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
 <style>
     /* -------------------------------------------------------------------
-       COMPACT MODERN DASHBOARD - WITH PROPER SCROLLING
+       COMPACT MODERN DASHBOARD - WITH PROPER SCROLLING (FIXED FOR MOBILE)
     ------------------------------------------------------------------- */
     :root {
         --primary: #FF6F00;
@@ -54,7 +54,7 @@
         line-height: 1.4;
     }
 
-    /* FIXED SCROLLING - Only one scrollbar */
+    /* FIXED SCROLLING - Only one scrollbar, full height on mobile */
     .main-content {
         margin-left: 240px;
         transition: margin-left 0.25s ease;
@@ -70,11 +70,22 @@
         margin-left: 70px;
     }
 
-    /* Mobile sidebar fix */
+    /* Mobile sidebar fix - FULL SCROLLABLE TO BOTTOM */
     @media (max-width: 768px) {
         .main-content {
             margin-left: 0 !important;
-            height: calc(100vh - 60px);
+            height: auto !important;      /* Critical: allows natural scroll */
+            min-height: 100vh;
+            overflow-y: visible !important;
+            padding-bottom: 40px;
+        }
+        /* Ensure body/html can scroll freely */
+        html, body {
+            height: auto;
+            overflow-x: hidden;
+        }
+        body {
+            overflow-y: auto !important;
         }
     }
 
@@ -516,7 +527,7 @@
     }
 
     /* -------------------------------------------------------------------
-       RESPONSIVE
+       RESPONSIVE - FULL SCROLL ON MOBILE (REACH BOTTOM)
     ------------------------------------------------------------------- */
     @media (max-width: 1024px) {
         .dashboard-container {
@@ -536,7 +547,7 @@
 
     @media (max-width: 768px) {
         .dashboard-container {
-            padding: 14px 16px;
+            padding: 14px 16px 32px 16px;  /* extra bottom padding for smooth scroll end */
         }
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
@@ -566,11 +577,18 @@
         .stat-value {
             font-size: 1.1rem;
         }
+        /* Ensure main content does not clip and scrolls completely */
+        .main-content {
+            overflow-y: visible !important;
+            height: auto !important;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
     }
 
     @media (max-width: 480px) {
         .dashboard-container {
-            padding: 12px;
+            padding: 12px 12px 40px 12px;
         }
         .stats-grid {
             grid-template-columns: 1fr;

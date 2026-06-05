@@ -35,11 +35,28 @@
         font-family: 'Inter', sans-serif;
     }
     
-    /* Fix scrolling - only one scrollbar */
+    /* FIX SCROLLING - Full height with proper bottom scroll on mobile */
     .main-content {
         overflow-y: auto !important;
         height: calc(100vh - var(--topbar-h, 60px));
         padding-bottom: 30px;
+    }
+    
+    /* Mobile scroll fix - ensures full bottom reach */
+    @media (max-width: 768px) {
+        .main-content {
+            height: auto !important;
+            min-height: 100vh;
+            overflow-y: visible !important;
+            padding-bottom: 50px;
+        }
+        html, body {
+            height: auto;
+            overflow-x: hidden;
+        }
+        body {
+            overflow-y: auto !important;
+        }
     }
     
     /* Full width container - NO CENTERING */
@@ -251,9 +268,12 @@
     }
     
     /* Events Grid - Full width responsive */
-  .event-card {
-    min-width: 350px;
-}
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+        margin-bottom: 24px;
+    }
     
     .event-card {
         background: white;
@@ -409,6 +429,7 @@
     .action-buttons {
         display: flex;
         gap: 8px;
+        flex-wrap: wrap;
     }
     
     .btn-icon {
@@ -454,6 +475,17 @@
         background: var(--danger-light);
         border-color: var(--danger);
         color: var(--danger);
+    }
+    
+    .btn-link-copy {
+        color: #25D366;
+        border-color: #25D366;
+    }
+    
+    .btn-link-copy:hover {
+        background: #25D366;
+        color: white;
+        border-color: #25D366;
     }
     
     /* Modal Styles */
@@ -686,7 +718,7 @@
         margin-bottom: 20px;
     }
     
-    /* Responsive */
+    /* Responsive - ensures full scroll to bottom */
     @media (max-width: 1024px) {
         .events-container {
             padding: 20px 24px;
@@ -699,7 +731,7 @@
     
     @media (max-width: 768px) {
         .events-container {
-            padding: 16px;
+            padding: 16px 16px 40px 16px;
         }
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
@@ -741,17 +773,6 @@
             width: 95%;
             margin: 16px;
         }
-
-        .btn-link-copy {
-    color: #25D366;
-    border-color: #25D366;
-}
-
-.btn-link-copy:hover {
-    background: #25D366;
-    color: white;
-    border-color: #25D366;
-}
     }
     
     @media (max-width: 480px) {
@@ -760,7 +781,7 @@
             gap: 10px;
         }
         .events-container {
-            padding: 12px;
+            padding: 12px 12px 40px 12px;
         }
         .event-body {
             padding: 12px;
@@ -932,17 +953,14 @@
                         </div>
                         
                         <div class="event-footer">
-                            <span class="contributors-count">
-                                <i class="fas fa-users"></i> {{ $contributorCount }} Wachangiaji
-                            </span>
+                          
                             <div class="action-buttons">
                                 <a href="{{ route('contributors.index', $event->id) }}" class="btn-icon btn-view">
                                     <i class="fas fa-eye"></i> Tazama
                                 </a>
-                                <!-- Add this inside the action-buttons div, before the other buttons -->
-<button onclick="getRegistrationLink({{ $event->id }})" class="btn-icon btn-link-copy" style="color: #25D366; border-color: #25D366;">
-    <i class="fab fa-whatsapp"></i> Pata Link
-</button>
+                                <button onclick="getRegistrationLink({{ $event->id }})" class="btn-icon btn-link-copy">
+                                    <i class="fab fa-whatsapp"></i> Pata Link
+                                </button>
                                 @if(auth()->user()->ownsEvent($event) || auth()->user()->role == 'admin')
                                     <button onclick="openEditModal({{ $event->id }}, '{{ addslashes($event->event_name) }}', '{{ $event->event_type }}', '{{ $event->event_date instanceof \Carbon\Carbon ? $event->event_date->format('Y-m-d') : date('Y-m-d', strtotime($event->event_date)) }}', '{{ $event->target_amount }}', '{{ addslashes($event->description) }}', '{{ $event->status }}')" class="btn-icon btn-edit">
                                         <i class="fas fa-edit"></i> Hariri
@@ -1194,81 +1212,79 @@
         });
     }
 
-// Get registration link
-async function getRegistrationLink(eventId) {
-    Swal.fire({
-        title: 'Inaandaa...',
-        text: 'Tafadhali subiri',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
-    
-    try {
-        const response = await fetch(`/events/${eventId}/get-registration-link`, {
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    // Get registration link
+    async function getRegistrationLink(eventId) {
+        Swal.fire({
+            title: 'Inaandaa...',
+            text: 'Tafadhali subiri',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
             }
         });
         
-        const data = await response.json();
-        
-        Swal.close();
-        
-        if (data.success) {
-            // Create shareable content
-            const shareText = `Karibu kuchangia katika tukio letu!\n\nBonyeza link hii kusajili na kuahidi mchango wako:\n${data.link}\n\nAsante kwa ushirikiano wako!`;
-            
-            Swal.fire({
-                title: 'Kiungo cha Usajili',
-                html: `
-                    <div style="text-align: center;">
-                        <img src="${data.qr_code}" style="width: 150px; height: 150px; margin-bottom: 15px; border-radius: 10px;">
-                        <p style="font-size: 0.8rem; word-break: break-all; background: #f3f4f6; padding: 10px; border-radius: 8px;">${data.link}</p>
-                        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
-                            <button onclick="copyToClipboard('${data.link}')" class="swal2-confirm swal2-styled" style="background: #3B82F6;">
-                                <i class="fas fa-copy"></i> Nakili
-                            </button>
-                            <button onclick="shareViaWhatsApp('${data.link}')" class="swal2-confirm swal2-styled" style="background: #25D366;">
-                                <i class="fab fa-whatsapp"></i> Shiriki WhatsApp
-                            </button>
-                        </div>
-                    </div>
-                `,
-                showConfirmButton: true,
-                confirmButtonText: 'Funga',
-                confirmButtonColor: '#FF6F00'
+        try {
+            const response = await fetch(`/events/${eventId}/get-registration-link`, {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
             });
-        } else {
+            
+            const data = await response.json();
+            
+            Swal.close();
+            
+            if (data.success) {
+                const shareText = `Karibu kuchangia katika tukio letu!\n\nBonyeza link hii kusajili na kuahidi mchango wako:\n${data.link}\n\nAsante kwa ushirikiano wako!`;
+                
+                Swal.fire({
+                    title: 'Kiungo cha Usajili',
+                    html: `
+                        <div style="text-align: center;">
+                            <img src="${data.qr_code}" style="width: 150px; height: 150px; margin-bottom: 15px; border-radius: 10px;">
+                            <p style="font-size: 0.8rem; word-break: break-all; background: #f3f4f6; padding: 10px; border-radius: 8px;">${data.link}</p>
+                            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                                <button onclick="copyToClipboard('${data.link}')" class="swal2-confirm swal2-styled" style="background: #3B82F6;">
+                                    <i class="fas fa-copy"></i> Nakili
+                                </button>
+                                <button onclick="shareViaWhatsApp('${data.link}')" class="swal2-confirm swal2-styled" style="background: #25D366;">
+                                    <i class="fab fa-whatsapp"></i> Shiriki WhatsApp
+                                </button>
+                            </div>
+                        </div>
+                    `,
+                    showConfirmButton: true,
+                    confirmButtonText: 'Funga',
+                    confirmButtonColor: '#FF6F00'
+                });
+            } else {
+                Swal.fire('Hitilafu', 'Imeshindwa kuunda kiungo. Jaribu tena.', 'error');
+            }
+        } catch (error) {
+            Swal.close();
             Swal.fire('Hitilafu', 'Imeshindwa kuunda kiungo. Jaribu tena.', 'error');
         }
-    } catch (error) {
-        Swal.close();
-        Swal.fire('Hitilafu', 'Imeshindwa kuunda kiungo. Jaribu tena.', 'error');
     }
-}
 
-// Copy to clipboard
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        Swal.fire({
-            icon: 'success',
-            title: 'Ime nakiliwa!',
-            text: 'Kiungo kimenakiliwa kwenye clipboard',
-            timer: 1500,
-            showConfirmButton: false
+    // Copy to clipboard
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Ime nakiliwa!',
+                text: 'Kiungo kimenakiliwa kwenye clipboard',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }).catch(() => {
+            Swal.fire('Hitilafu', 'Imeshindwa kunakili. Tafadhali nakili kwa mkono.', 'error');
         });
-    }).catch(() => {
-        Swal.fire('Hitilafu', 'Imeshindwa kunakili. Tafadhali nakili kwa mkono.', 'error');
-    });
-}
+    }
 
-// Share via WhatsApp
-function shareViaWhatsApp(link) {
-    const message = encodeURIComponent(`Karibu kuchangia katika tukio letu!\n\nBonyeza link hii kusajili na kuahidi mchango wako:\n${link}\n\nAsante kwa ushirikiano wako!`);
-    window.open(`https://wa.me/?text=${message}`, '_blank');
-}
-
+    // Share via WhatsApp
+    function shareViaWhatsApp(link) {
+        const message = encodeURIComponent(`Karibu kuchangia katika tukio letu!\n\nBonyeza link hii kusajili na kuahidi mchango wako:\n${link}\n\nAsante kwa ushirikiano wako!`);
+        window.open(`https://wa.me/?text=${message}`, '_blank');
+    }
 </script>
 @endsection
