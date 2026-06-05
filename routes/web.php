@@ -13,6 +13,8 @@ use App\Http\Controllers\CardController;
 use App\Http\Controllers\UjumbeController;
 use App\Http\Controllers\ContributorController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Admin\AdminController;
+
 
 // ========== PUBLIC ROUTES (No Auth Required) ==========
 Route::get('/', fn() => view('home'))->name('home');
@@ -162,3 +164,65 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 });
+
+// Admin Routes (Separate from main app)
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    
+    // User Management
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::get('/users/download', [AdminController::class, 'downloadUsers'])->name('users.download');
+    Route::post('/users/store', [AdminController::class, 'storeUser'])->name('users.store');
+    Route::get('/users/{id}/edit-ajax', [AdminController::class, 'editUserAjax'])->name('users.edit.ajax');
+    Route::put('/users/{id}/update', [AdminController::class, 'updateUser'])->name('users.update');
+    Route::delete('/users/{id}/delete', [AdminController::class, 'deleteUser'])->name('users.delete');
+    
+    // Event Management
+    Route::get('/events', [AdminController::class, 'events'])->name('events');
+    Route::get('/events/download', [AdminController::class, 'downloadEvents'])->name('events.download');
+    Route::delete('/events/{id}/delete', [AdminController::class, 'deleteEvent'])->name('events.delete');
+    
+   
+    // Card Management - ADD THESE ROUTES
+    Route::get('/cards', [AdminController::class, 'cards'])->name('cards');
+    Route::get('/cards/download', [AdminController::class, 'downloadCards'])->name('cards.download');
+    Route::get('/cards/{id}/details', [AdminController::class, 'getCardDetails'])->name('cards.details');
+    Route::put('/cards/{id}/process', [AdminController::class, 'processCard'])->name('cards.process');
+    Route::delete('/cards/{id}/delete', [AdminController::class, 'deleteCard'])->name('cards.delete');
+    Route::get('/cards/data/{id}', [CardController::class, 'getCardData'])->name('cards.data');
+    // Reports
+    Route::get('/reports', [AdminController::class, 'reports'])->name('reports');
+    Route::get('/reports/events', [AdminController::class, 'eventsReport'])->name('reports.events');
+    
+    // Profile Routes
+    Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
+    Route::put('/profile/update', [AdminController::class, 'updateProfile'])->name('profile.update');
+});
+
+
+// routes/web.php
+
+// SMS Management Routes
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/sms', [UjumbeController::class, 'index'])->name('admin.sms');
+    Route::post('/sms/quota/{userId}', [UjumbeController::class, 'updateSmsQuota'])->name('admin.sms.quota');
+    Route::post('/sms/reset-monthly', [UjumbeController::class, 'resetMonthlySmsUsage'])->name('admin.sms.reset');
+});
+
+// SMS sending routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/ujumbe/michango', [UjumbeController::class, 'michango'])->name('ujumbe.michango');
+    Route::get('/ujumbe/mwaliko', [UjumbeController::class, 'mwaliko'])->name('ujumbe.mwaliko');
+    Route::post('/ujumbe/tuma-michango', [UjumbeController::class, 'tumaMichango'])->name('ujumbe.tuma-michango');
+    Route::post('/ujumbe/tuma-mwaliko', [UjumbeController::class, 'tumaMwaliko'])->name('ujumbe.tuma-mwaliko');
+    Route::get('/ujumbe/download-sms-export', [UjumbeController::class, 'downloadSMSExport'])->name('ujumbe.download-sms-export');
+    Route::get('/ujumbe/event/{eventId}/contributors', [UjumbeController::class, 'getEventContributors']);
+    Route::get('/ujumbe/event/{eventId}/details', [UjumbeController::class, 'getEventDetails']);
+});
+
+// WhatsApp verification route
+Route::get('/api/whatsapp/verify', [UjumbeController::class, 'verifyWhatsAppTemplate'])->name('whatsapp.verify');
+
+// Batch WhatsApp sending
+Route::post('/ujumbe/whatsapp/batch', [UjumbeController::class, 'sendBatchWhatsApp'])->name('ujumbe.whatsapp.batch');

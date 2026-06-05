@@ -16,6 +16,8 @@
         --danger: #EF4444;
         --info: #3B82F6;
         --info-light: #DBEAFE;
+        --warning: #F59E0B;
+        --warning-light: #FEF3C7;
         --text-primary: #000000;
         --text-secondary: #1F2937;
         --text-muted: #4B5563;
@@ -33,20 +35,11 @@
         font-family: 'Inter', sans-serif;
     }
 
-    /* Fix scrolling */
-    .main-content {
-        overflow-y: auto !important;
-        height: calc(100vh - var(--topbar-h, 60px));
-        padding-bottom: 30px;
-    }
-
-    /* Full width container */
     .cards-container {
         width: 100%;
         padding: 24px 32px;
     }
 
-    /* Header Section */
     .header-section {
         display: flex;
         flex-wrap: wrap;
@@ -91,14 +84,12 @@
         color: white;
     }
 
-    /* Two Column Layout */
     .two-column-layout {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 24px;
     }
 
-    /* Cards Grid - Left Column */
     .cards-grid-section {
         background: white;
         border-radius: var(--radius-lg);
@@ -127,12 +118,6 @@
 
     .section-header h5 i {
         color: var(--primary);
-    }
-
-    .section-header p {
-        font-size: 0.7rem;
-        color: var(--text-muted);
-        margin: 4px 0 0;
     }
 
     .cards-grid {
@@ -191,6 +176,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
+    }
+
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .card-image i {
@@ -234,7 +226,37 @@
         color: var(--success);
     }
 
-    /* Send Section - Right Column */
+    /* Status Badges */
+    .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-size: 0.55rem;
+        font-weight: 600;
+        margin-top: 6px;
+    }
+
+    .status-pending {
+        background: var(--warning-light);
+        color: var(--warning);
+    }
+
+    .status-approved {
+        background: var(--info-light);
+        color: var(--info);
+    }
+
+    .status-completed {
+        background: var(--success-light);
+        color: var(--success);
+    }
+
+    .status-rejected {
+        background: #FEE2E2;
+        color: var(--danger);
+    }
+
+    /* Send Section */
     .send-section {
         background: white;
         border-radius: var(--radius-lg);
@@ -271,6 +293,36 @@
         margin-bottom: 4px;
     }
 
+    /* Designed Card Preview */
+    .designed-card {
+        background: var(--bg-light);
+        border-radius: var(--radius-md);
+        padding: 16px;
+        margin-bottom: 24px;
+        border: 1px solid var(--success);
+    }
+
+    .designed-card h6 {
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--success);
+    }
+
+    .designed-card img {
+        width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+        border-radius: var(--radius-sm);
+        margin-bottom: 12px;
+    }
+
+    .designed-card .design-info {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-align: center;
+    }
+
     .form-group {
         margin-bottom: 20px;
     }
@@ -283,10 +335,6 @@
         color: var(--text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.3px;
-    }
-
-    .form-group label .required {
-        color: var(--danger);
     }
 
     .input-with-icon {
@@ -359,6 +407,11 @@
         transform: translateY(-1px);
     }
 
+    .btn-whatsapp:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
     .btn-contact {
         background: var(--bg-light);
         border: 1px solid var(--border-color);
@@ -371,17 +424,11 @@
         color: var(--primary);
     }
 
-    .btn-contact:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
     .empty-state {
         text-align: center;
         padding: 60px 20px;
         background: white;
         border-radius: var(--radius-lg);
-        grid-column: span 2;
     }
 
     .empty-state i {
@@ -404,7 +451,6 @@
         margin-bottom: 20px;
     }
 
-    /* Loading Spinner */
     .spinner-sm {
         width: 14px;
         height: 14px;
@@ -419,60 +465,23 @@
         to { transform: rotate(360deg); }
     }
 
-    /* Responsive */
     @media (max-width: 1024px) {
-        .cards-container {
-            padding: 20px 24px;
-        }
+        .cards-container { padding: 20px 24px; }
     }
 
     @media (max-width: 768px) {
-        .cards-container {
-            padding: 16px;
-        }
-
-        .two-column-layout {
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-
-        .cards-grid {
-            max-height: 400px;
-            padding: 16px;
-        }
-
-        .send-content {
-            padding: 20px;
-        }
-
-        .contact-buttons {
-            flex-direction: column;
-        }
-
-        .btn-send {
-            width: 100%;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .cards-container {
-            padding: 12px;
-        }
-
-        .cards-grid {
-            padding: 12px;
-        }
-
-        .send-content {
-            padding: 16px;
-        }
+        .cards-container { padding: 16px; }
+        .two-column-layout { grid-template-columns: 1fr; gap: 16px; }
+        .cards-grid { max-height: 400px; padding: 16px; }
+        .send-content { padding: 20px; }
+        .contact-buttons { flex-direction: column; }
+        .btn-send { width: 100%; }
     }
 </style>
 @endpush
 
 @section('content')
 <div class="cards-container">
-    <!-- Header -->
     <div class="header-section">
         <div class="header-title">
             <h4>Tuma Kadi</h4>
@@ -496,15 +505,33 @@
                 </div>
                 <div class="cards-grid" id="cardsGrid">
                     @foreach($cards as $card)
-                        <div class="card-item" data-card-id="{{ $card->id }}" data-card-title="{{ $card->title }}" data-card-date="{{ date('d M Y', strtotime($card->event_date)) }}" data-card-type="{{ $card->card_type }}" onclick="selectCard({{ $card->id }})">
-                            <div class="card-image">
-                                <i class="fas {{ $card->card_type === 'invitation' ? 'fa-envelope-open-text' : 'fa-hand-holding-heart' }}"></i>
-                            </div>
+                        <div class="card-item" 
+                             data-card-id="{{ $card->id }}" 
+                             data-card-title="{{ $card->title }}" 
+                             data-card-date="{{ date('d M Y', strtotime($card->event_date)) }}" 
+                             data-card-type="{{ $card->card_type }}"
+                             data-admin-status="{{ $card->admin_status }}"
+                             data-design-file="{{ $card->design_file_path }}"
+                             onclick="selectCard({{ $card->id }})">
+   <div class="card-image">
+    @if($card->design_file_path && $card->admin_status == 'completed')
+        <img src="{{ asset('storage/' . $card->design_file_path) }}" alt="Designed Card" style="width:100%; height:100%; object-fit:cover;">
+    @else
+        <i class="fas {{ $card->card_type === 'invitation' ? 'fa-envelope-open-text' : 'fa-hand-holding-heart' }}"></i>
+    @endif
+</div>
                             <div class="card-info">
                                 <div class="card-title">{{ ucfirst($card->title) }}</div>
                                 <div class="card-date">{{ date('d M Y', strtotime($card->event_date)) }}</div>
                                 <span class="card-type type-{{ $card->card_type }}">
                                     {{ $card->card_type === 'invitation' ? '📨 Mwaliko' : '🤝 Mchango' }}
+                                </span>
+                                <br>
+                                <span class="status-badge status-{{ $card->admin_status }}">
+                                    @if($card->admin_status == 'pending') ⏳ Inasubiri
+                                    @elseif($card->admin_status == 'approved') ✓ Imeidhinishwa
+                                    @elseif($card->admin_status == 'completed') ✅ Imekamilika
+                                    @else ❌ Imekataliwa @endif
                                 </span>
                             </div>
                         </div>
@@ -527,6 +554,14 @@
                         <p id="selectedCardTitle">-</p>
                         <p id="selectedCardDate">-</p>
                         <p id="selectedCardType">-</p>
+                        <p id="selectedCardStatus">-</p>
+                    </div>
+
+                    <!-- Designed Card from Admin -->
+                    <div id="designedCardPreview" class="designed-card" style="display: none;">
+                        <h6><i class="fas fa-palette"></i> Kadi Iliyobuniwa na Msimamizi</h6>
+                        <img id="designedCardImage" src="" alt="Designed Card">
+                        <div class="design-info" id="designInfo"></div>
                     </div>
 
                     <form id="sendForm">
@@ -571,34 +606,103 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     let selectedCardId = null;
+    let cardData = {};
 
-    function selectCard(cardId) {
-        // Remove selected class from all cards
-        document.querySelectorAll('.card-item').forEach(card => {
-            card.classList.remove('selected');
-        });
+    // Fetch card details from server
+    async function fetchCardDetails(cardId) {
+        try {
+            const response = await fetch(`/cards/data/${cardId}`);
+            const data = await response.json();
+            cardData[cardId] = data;
+            return data;
+        } catch (error) {
+            console.error('Error fetching card details:', error);
+            return null;
+        }
+    }
 
-        // Add selected class to clicked card
-        const selectedCard = document.querySelector(`.card-item[data-card-id="${cardId}"]`);
-        if (selectedCard) {
-            selectedCard.classList.add('selected');
-            
-            // Get card data
-            const cardTitle = selectedCard.getAttribute('data-card-title');
-            const cardDate = selectedCard.getAttribute('data-card-date');
-            const cardType = selectedCard.getAttribute('data-card-type');
-            const cardTypeText = cardType === 'invitation' ? '📨 Mwaliko' : '🤝 Ombi la Mchango';
-            
-            // Update preview
-            document.getElementById('selectedCardId').value = cardId;
-            document.getElementById('selectedCardTitle').innerHTML = `<i class="fas fa-tag"></i> ${cardTitle}`;
-            document.getElementById('selectedCardDate').innerHTML = `<i class="far fa-calendar"></i> ${cardDate}`;
-            document.getElementById('selectedCardType').innerHTML = `<i class="fas fa-info-circle"></i> ${cardTypeText}`;
-            document.getElementById('selectedCardPreview').style.display = 'block';
+async function selectCard(cardId) {
+    // Remove selected class from all cards
+    document.querySelectorAll('.card-item').forEach(card => {
+        card.classList.remove('selected');
+    });
+
+    // Add selected class to clicked card
+    const selectedCard = document.querySelector(`.card-item[data-card-id="${cardId}"]`);
+    if (selectedCard) {
+        selectedCard.classList.add('selected');
+        
+        // Get card data from attributes
+        const cardTitle = selectedCard.getAttribute('data-card-title');
+        const cardDate = selectedCard.getAttribute('data-card-date');
+        const cardType = selectedCard.getAttribute('data-card-type');
+        const adminStatus = selectedCard.getAttribute('data-admin-status');
+        
+        const cardTypeText = cardType === 'invitation' ? '📨 Mwaliko' : '🤝 Ombi la Mchango';
+        
+        let statusText = '';
+        let canSend = false;
+        
+        switch(adminStatus) {
+            case 'pending':
+                statusText = '⏳ Inasubiri uidhinishwe na msimamizi';
+                canSend = false;
+                break;
+            case 'approved':
+                statusText = '✓ Imeidhinishwa - Inasubiri kubuniwa';
+                canSend = false;
+                break;
+            case 'completed':
+                statusText = '✅ Imekamilika - Unaweza kutuma kadi';
+                canSend = true;
+                break;
+            case 'rejected':
+                statusText = '❌ Imekataliwa - Wasiliana na msimamizi';
+                canSend = false;
+                break;
         }
         
-        selectedCardId = cardId;
+        // Update preview
+        document.getElementById('selectedCardId').value = cardId;
+        document.getElementById('selectedCardTitle').innerHTML = `<i class="fas fa-tag"></i> ${cardTitle}`;
+        document.getElementById('selectedCardDate').innerHTML = `<i class="far fa-calendar"></i> ${cardDate}`;
+        document.getElementById('selectedCardType').innerHTML = `<i class="fas fa-info-circle"></i> ${cardTypeText}`;
+        document.getElementById('selectedCardStatus').innerHTML = `<i class="fas fa-clock"></i> ${statusText}`;
+        document.getElementById('selectedCardPreview').style.display = 'block';
+        
+        // Fetch card details from server to get the image
+        const details = await fetchCardDetails(cardId);
+        
+        // Show designed card if completed
+        const designedCardDiv = document.getElementById('designedCardPreview');
+        if (adminStatus === 'completed' && details && details.design_file_url) {
+            document.getElementById('designedCardImage').src = details.design_file_url;
+            
+            if (details.design_cost) {
+                document.getElementById('designInfo').innerHTML = `Gharama ya kubuni: TSh ${Number(details.design_cost).toLocaleString()}`;
+            } else {
+                document.getElementById('designInfo').innerHTML = 'Kadi imebuniwa na msimamizi';
+            }
+            designedCardDiv.style.display = 'block';
+        } else {
+            designedCardDiv.style.display = 'none';
+        }
+        
+        // Enable/disable send button based on status
+        const submitBtn = document.getElementById('submitBtn');
+        if (canSend) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+        } else {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
+            submitBtn.style.cursor = 'not-allowed';
+        }
     }
+    
+    selectedCardId = cardId;
+}
 
     // Select from phone contacts
     async function selectFromContacts() {
@@ -616,7 +720,6 @@
                 
                 if (contacts && contacts.length > 0 && contacts[0].tel && contacts[0].tel.length > 0) {
                     let phone = contacts[0].tel[0];
-                    // Clean phone number
                     phone = phone.replace(/[^0-9+]/g, '');
                     phone = phone.replace(/^\+/, '');
                     if (phone.startsWith('0')) {
@@ -649,84 +752,83 @@
 
     document.getElementById('selectContactBtn')?.addEventListener('click', selectFromContacts);
 
-// In the send form submission, ensure the phone number is clean
-document.getElementById('sendForm')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    if (!selectedCardId) {
-        Swal.fire({
-            title: 'Hitilafu',
-            text: 'Tafadhali chagua kadi kwanza',
-            icon: 'warning',
-            confirmButtonColor: '#FF6F00'
-        });
-        return;
-    }
-    
-    let phoneNumber = document.getElementById('phoneNumber').value;
-    if (!phoneNumber) {
-        Swal.fire({
-            title: 'Hitilafu',
-            text: 'Tafadhali weka namba ya simu',
-            icon: 'warning',
-            confirmButtonColor: '#FF6F00'
-        });
-        return;
-    }
-    
-    // Clean phone number before sending
-    phoneNumber = phoneNumber.replace(/[^0-9+]/g, '');
-    document.getElementById('phoneNumber').value = phoneNumber;
-    
-    const submitBtn = document.getElementById('submitBtn');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner-sm"></span> Inatuma...';
-    
-    const formData = new FormData(this);
-    formData.append('card_id', selectedCardId);
-    
-    try {
-        const response = await fetch('{{ route("cards.share") }}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
+    // Send form submission
+    document.getElementById('sendForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        const result = await response.json();
-        
-        if (result.success) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Imefanikiwa!',
-                html: 'Kadi imetumwa kikamilifu kupitia WhatsApp',
-                confirmButtonColor: '#FF6F00',
-                timer: 3000,
-                timerProgressBar: true
-            });
-            
-            document.getElementById('phoneNumber').value = '';
-        } else {
+        if (!selectedCardId) {
             Swal.fire({
                 title: 'Hitilafu',
-                text: result.message || 'Imeshindwa kutuma kadi',
+                text: 'Tafadhali chagua kadi kwanza',
+                icon: 'warning',
+                confirmButtonColor: '#FF6F00'
+            });
+            return;
+        }
+        
+        let phoneNumber = document.getElementById('phoneNumber').value;
+        if (!phoneNumber) {
+            Swal.fire({
+                title: 'Hitilafu',
+                text: 'Tafadhali weka namba ya simu',
+                icon: 'warning',
+                confirmButtonColor: '#FF6F00'
+            });
+            return;
+        }
+        
+        phoneNumber = phoneNumber.replace(/[^0-9+]/g, '');
+        document.getElementById('phoneNumber').value = phoneNumber;
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-sm"></span> Inatuma...';
+        
+        const formData = new FormData(this);
+        formData.append('card_id', selectedCardId);
+        
+        try {
+            const response = await fetch('{{ route("cards.share") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Imefanikiwa!',
+                    html: 'Kadi imetumwa kikamilifu kupitia WhatsApp',
+                    confirmButtonColor: '#FF6F00',
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                
+                document.getElementById('phoneNumber').value = '';
+            } else {
+                Swal.fire({
+                    title: 'Hitilafu',
+                    text: result.message || 'Imeshindwa kutuma kadi',
+                    icon: 'error',
+                    confirmButtonColor: '#FF6F00'
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                title: 'Hitilafu',
+                text: 'Imeshindwa kutuma kadi. Jaribu tena.',
                 icon: 'error',
                 confirmButtonColor: '#FF6F00'
             });
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
         }
-    } catch (error) {
-        Swal.fire({
-            title: 'Hitilafu',
-            text: 'Imeshindwa kutuma kadi. Jaribu tena.',
-            icon: 'error',
-            confirmButtonColor: '#FF6F00'
-        });
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-    }
-});
+    });
 </script>
 @endsection

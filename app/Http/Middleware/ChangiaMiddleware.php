@@ -223,7 +223,14 @@ class ChangiaMiddleware
         
         return $this->unauthorized($request, 'Huna ruhusa ya kufikia ukurasa huu.');
     }
-
+private function checkAdminDashboard($user, Request $request, Closure $next): Response
+{
+    if ($user->role === 'admin') {
+        return $next($request);
+    }
+    
+    return $this->unauthorized($request, 'Sehemu hii inapatikana kwa wasimamizi pekee.');
+}
     /**
      * Return unauthorized response
      */

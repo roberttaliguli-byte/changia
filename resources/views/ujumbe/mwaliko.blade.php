@@ -484,8 +484,7 @@
         </div>
         
         <div class="form-content">
-            <form method="POST" action="{{ route('ujumbe.tuma.mwaliko') }}" id="messageForm">
-                @csrf
+         <form method="POST" action="{{ route('ujumbe.tuma-mwaliko') }}" id="messageForm">   @csrf
                 
                 <div class="form-group">
                     <label><i class="fas fa-calendar-alt"></i> Chagua Tukio <span class="text-danger">*</span></label>
@@ -929,7 +928,7 @@
                 formData.append('event_id', selectedEvent.value);
                 
                 try {
-                    const response = await fetch('{{ route("ujumbe.tuma.mwaliko") }}', {
+                    const response = await fetch('{{ route("ujumbe.tuma-mwaliko") }}', {
                         method: 'POST',
                         body: formData,
                         headers: { 'X-Requested-With': 'XMLHttpRequest' }

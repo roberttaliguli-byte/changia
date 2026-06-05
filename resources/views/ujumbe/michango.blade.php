@@ -523,7 +523,7 @@
         </div>
         
         <div class="form-content">
-            <form method="POST" action="{{ route('ujumbe.tuma.michango') }}" id="messageForm">
+         <form method="POST" action="{{ route('ujumbe.tuma-michango') }}" id="messageForm">
                 @csrf
                 
                 <div class="form-group">
